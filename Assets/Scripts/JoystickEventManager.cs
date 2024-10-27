@@ -6,6 +6,7 @@ using UnityEngine;
 public class JoystickEventManager : MonoBehaviour
 {
     public FixedJoystick fixedJoystick;
+    public string description;
 
     private UdpCommunicator udpCommunicator;
 
@@ -40,7 +41,7 @@ public class JoystickEventManager : MonoBehaviour
         if (horizontal != lastHorizontal || vertical != lastVertical)
         {
             string messageType = "JoystickData";
-            string payload = horizontal + "," + vertical;
+            string payload = description + "," + horizontal + "," + vertical;
             udpCommunicator.SendUdpMessage(messageType + "|" + payload);
             lastHorizontal = horizontal;
             lastVertical = vertical;

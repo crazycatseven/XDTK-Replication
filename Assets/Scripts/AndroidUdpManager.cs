@@ -6,6 +6,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Android;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(ArCameraDataSender))]
 [RequireComponent(typeof(ButtonEventManager))]
@@ -20,17 +21,19 @@ public class AndroidUdpManager : MonoBehaviour
     public TMP_InputField ipInputField;
     public TMP_InputField portInputField;
     public Button connectButton;
-    public Button sendButton;
     public TextMeshProUGUI debugText;
+
+    public TextMeshProUGUI cameraDataText;
 
     private ArCameraDataSender arCameraDataSender;
     private ButtonEventManager buttonEventManager;
-    private JoystickEventManager joystickEventManager;
+    private List<JoystickEventManager> joystickEventManagers;
     private void Awake()
     {
         arCameraDataSender = GetComponent<ArCameraDataSender>();
         buttonEventManager = GetComponent<ButtonEventManager>();
-        joystickEventManager = GetComponent<JoystickEventManager>();
+        joystickEventManagers = new List<JoystickEventManager>();
+        joystickEventManagers.AddRange(GetComponents<JoystickEventManager>());
     }
 
     private int remotePort;  
@@ -44,7 +47,7 @@ public class AndroidUdpManager : MonoBehaviour
         udpCommunicator.OnMessageReceived = OnMessageReceived;
 
         connectButton.onClick.AddListener(OnConnectButtonClicked);
-        sendButton.onClick.AddListener(OnSendButtonClicked);
+        
 
         // 添加数据发送器
         deviceInfoSender = new DeviceInfoSender(udpCommunicator);
@@ -52,7 +55,7 @@ public class AndroidUdpManager : MonoBehaviour
         arCameraDataSender.SetUdpCommunicator(udpCommunicator);
         buttonEventManager.SetUdpCommunicator(udpCommunicator);
 
-        if (joystickEventManager != null)
+        foreach (JoystickEventManager joystickEventManager in joystickEventManagers)
         {
             joystickEventManager.SetUdpCommunicator(udpCommunicator);
         }
@@ -61,6 +64,7 @@ public class AndroidUdpManager : MonoBehaviour
     void Update()
     {
         // touchScreenSender.UpdateListening();
+        cameraDataText.text = arCameraDataSender.GetCameraData();
     }
 
     // 当点击连接按钮时调用
@@ -74,14 +78,6 @@ public class AndroidUdpManager : MonoBehaviour
         deviceInfoSender.SendDeviceInfo();
     }
 
-    // 当点击发送按钮时调用
-    private void OnSendButtonClicked()
-    {
-        string messageType = "Test";
-        string payload = "Test payload";
-        udpCommunicator.SendUdpMessage(messageType + "|" + payload);
-        debugText.text = "Sent message: " + messageType + "|" + payload;
-    }
 
     // 处理接收到的消息
     private void OnMessageReceived(string message)
