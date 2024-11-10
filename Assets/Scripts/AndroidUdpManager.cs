@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Android;
 using System.Collections.Generic;
+using UnityEngine.XR.ARFoundation;
 
 [RequireComponent(typeof(ArCameraDataSender))]
 [RequireComponent(typeof(ButtonEventManager))]
@@ -26,6 +27,7 @@ public class AndroidUdpManager : MonoBehaviour
     public TextMeshProUGUI cameraDataText;
 
     private ArCameraDataSender arCameraDataSender;
+    private ImageSender imageSender;
     private ButtonEventManager buttonEventManager;
     private List<JoystickEventManager> joystickEventManagers;
     private void Awake()
@@ -40,9 +42,12 @@ public class AndroidUdpManager : MonoBehaviour
     private UdpCommunicator udpCommunicator;
     private DeviceInfoSender deviceInfoSender;
     private TouchScreenSender touchScreenSender;
-
+    private ARRaycastManager arRaycastManager;
+    private AROriginManager arOriginManager;
     void Start()
     {
+        arRaycastManager = FindObjectOfType<ARRaycastManager>();
+        arOriginManager = FindObjectOfType<AROriginManager>();
         udpCommunicator = new UdpCommunicator(localPort);
         udpCommunicator.OnMessageReceived = OnMessageReceived;
 
@@ -51,7 +56,8 @@ public class AndroidUdpManager : MonoBehaviour
 
         // 添加数据发送器
         deviceInfoSender = new DeviceInfoSender(udpCommunicator);
-        touchScreenSender = new TouchScreenSender(this, udpCommunicator);
+        imageSender = new ImageSender(udpCommunicator);
+        touchScreenSender = new TouchScreenSender(this, udpCommunicator, arRaycastManager, arOriginManager);
         arCameraDataSender.SetUdpCommunicator(udpCommunicator);
         buttonEventManager.SetUdpCommunicator(udpCommunicator);
 
@@ -59,6 +65,11 @@ public class AndroidUdpManager : MonoBehaviour
         {
             joystickEventManager.SetUdpCommunicator(udpCommunicator);
         }
+
+
+        ARPlaneInteraction arPlaneInteraction = FindObjectOfType<ARPlaneInteraction>();
+        arPlaneInteraction.udpCommunicator = udpCommunicator;
+        arPlaneInteraction.arOriginManager = arOriginManager;
     }
 
     void Update()
@@ -66,6 +77,7 @@ public class AndroidUdpManager : MonoBehaviour
         // touchScreenSender.UpdateListening();
         cameraDataText.text = arCameraDataSender.GetCameraData();
     }
+
 
     // 当点击连接按钮时调用
     private void OnConnectButtonClicked()
@@ -78,6 +90,10 @@ public class AndroidUdpManager : MonoBehaviour
         deviceInfoSender.SendDeviceInfo();
     }
 
+    public void SendImage(Texture2D image)
+    {
+        imageSender.SendImage(image);
+    }
 
     // 处理接收到的消息
     private void OnMessageReceived(string message)

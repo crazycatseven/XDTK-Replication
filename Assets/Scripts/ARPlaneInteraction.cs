@@ -8,6 +8,10 @@ using UnityEngine.EventSystems;
 public class ARPlaneInteraction : MonoBehaviour
 {
     public GameObject objectToPlacePrefab;
+
+    public UdpCommunicator udpCommunicator;
+
+    public AROriginManager arOriginManager;
     public bool visualizePlanes = true;
 
     private ARPlaneManager arPlaneManager;
@@ -41,6 +45,14 @@ public class ARPlaneInteraction : MonoBehaviour
 
 
                     Instantiate(objectToPlacePrefab, hitPose.position, hitPose.rotation);
+
+
+                    Vector3 relativePosition = Camera.main.transform.InverseTransformPoint(hitPose.position);
+
+                    string messageType = "PlaneHit";
+                    string payload = $"Position: {relativePosition.x}, {relativePosition.y}, {relativePosition.z}";
+                    udpCommunicator.SendUdpMessage(messageType + "|" + payload, "TXT");
+                    Debug.Log("Sent plane hit data: " + payload);
                 }
             }
         }

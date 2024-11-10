@@ -17,7 +17,7 @@ public class DeviceInfoSender
                          Screen.width + "x" + Screen.height + "," +
                          SystemInfo.operatingSystem;
 
-        udpCommunicator.SendUdpMessage(messageType + "|" + payload);
+        udpCommunicator.SendUdpMessage(messageType + "|" + payload, "TXT");
         Debug.Log("Sent device info: " + payload);
     }
 }

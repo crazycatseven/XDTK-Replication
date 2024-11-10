@@ -1,59 +1,69 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CalibrationIndicator : MonoBehaviour
 {
     public RectTransform boundary;
     public RectTransform circle;
     public float maxOffset = 50f;
+    public float toleranceAngle = 1f;
     public Color alignedColor = Color.green;
+    public Color nearAlignedColor = Color.yellow;
     public Color misalignedColor = Color.red;
-
+    public TextMeshProUGUI angleText;
     public AROriginManager rotationProvider;
 
     void Update()
     {
         Quaternion relativeRotation = rotationProvider.GetCameraRelativeRotation();
 
-        float alignmentScore = GetAlignmentScore(relativeRotation);
+        float angleDifference = GetAngleDifference(relativeRotation);
 
-        UpdateCircle(alignmentScore);
+        UpdateCircle(angleDifference);
     }
 
-    float GetAlignmentScore(Quaternion relativeRotation)
+
+    float GetAngleDifference(Quaternion relativeRotation)
     {
         float xRotation = relativeRotation.eulerAngles.x;
 
-        xRotation = NormalizeAngle(xRotation);
+        float difference = (xRotation + 180) % 360 - 180;
 
-        float targetRotationX = 0f;
 
-        float angleDifference = Mathf.Abs(xRotation - targetRotationX);
-
-        float maxAllowedAngle = 45f;
-
-        float alignmentScore = Mathf.Clamp01(angleDifference / maxAllowedAngle);
-
-        return alignmentScore;
-    }
-
-    float NormalizeAngle(float angle)
-    {
-        angle = angle % 360;
-        if (angle > 180)
+        if (Mathf.Abs(difference) <= toleranceAngle)
         {
-            angle -= 360;
+            return 0f;
         }
-        return angle;
+
+        return difference;
     }
 
-    void UpdateCircle(float alignmentScore)
-    {
-        // 计算Circle在边界内的位置
-        Vector2 offset = new Vector2(alignmentScore * maxOffset, 0);
 
+    void UpdateCircle(float difference)
+    {
+        
+
+        Vector2 offset = new Vector2(0, difference / 180 * maxOffset);
+
+        // Vertically offset the circle
         circle.anchoredPosition = offset;
 
-        circle.GetComponent<Image>().color = Color.Lerp(alignedColor, misalignedColor, alignmentScore);
+        // Update the color of the circle
+        if (difference == 0f)
+        {
+            circle.GetComponent<Image>().color = alignedColor;
+            angleText.text = "Press";
+        }
+        else if (difference / 180 >= 0.5f)
+        {
+            angleText.text = "-" + Mathf.Abs(difference).ToString("F0");
+            circle.GetComponent<Image>().color = Color.Lerp(nearAlignedColor, misalignedColor, difference / 180 * 2);
+        }
+        else
+        {
+            angleText.text = "-" + Mathf.Abs(difference).ToString("F0");
+            circle.GetComponent<Image>().color = Color.Lerp(alignedColor, nearAlignedColor, difference / 180 * 2);
+        }
     }
 }

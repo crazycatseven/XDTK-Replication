@@ -40,7 +40,7 @@ public class ArCameraDataSender: MonoBehaviour
 
         if (udpCommunicator != null)
         {
-            udpCommunicator.SendUdpMessage(messageType + "|" + payload);
+            udpCommunicator.SendUdpMessage(messageType + "|" + payload, "TXT");
         }
     }
     public string GetCameraData()

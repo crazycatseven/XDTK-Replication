@@ -35,7 +35,7 @@ public class UdpCommunicator
         }
     }
 
-    public void SendUdpMessage(string message)
+    public void SendUdpMessage(string message, string dataType = "TXT")
     {
         if (remoteEndPoint == null)
         {
@@ -45,13 +45,41 @@ public class UdpCommunicator
 
         try
         {
-            byte[] data = Encoding.UTF8.GetBytes(message);
+            // 构建带有文件头的完整消息
+            string fullMessage = dataType + "|" + message;
+            byte[] data = Encoding.UTF8.GetBytes(fullMessage);
+
             udpClient.Send(data, data.Length, remoteEndPoint);
-            Debug.Log("Message sent via UDP: " + message);
+            Debug.Log("Message sent via UDP: " + fullMessage);
         }
         catch (Exception e)
         {
             Debug.LogError("Error sending message: " + e.Message);
+        }
+    }
+
+    public void SendUdpMessage(byte[] data, string dataType = "IMG")
+    {
+        if (remoteEndPoint == null)
+        {
+            Debug.LogError("Remote endpoint is not set. Please set it before sending messages.");
+            return;
+        }
+
+        try
+        {
+            // 构建带有文件头的完整数据包
+            byte[] header = Encoding.ASCII.GetBytes(dataType + "|");
+            byte[] packet = new byte[header.Length + data.Length];
+            System.Array.Copy(header, packet, header.Length);
+            System.Array.Copy(data, 0, packet, header.Length, data.Length);
+
+            udpClient.Send(packet, packet.Length, remoteEndPoint);
+            Debug.Log("Binary data sent via UDP with header: " + dataType);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error sending binary data: " + e.Message);
         }
     }
 
