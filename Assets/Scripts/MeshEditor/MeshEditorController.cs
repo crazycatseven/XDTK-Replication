@@ -245,8 +245,8 @@ public class MeshEditorController : MonoBehaviour
         lineObject.transform.SetParent(moveGizmo.transform);
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
 
-        lineRenderer.startWidth = 0.02f;
-        lineRenderer.endWidth = 0.02f;
+        lineRenderer.startWidth = 0.04f;
+        lineRenderer.endWidth = 0.04f;
 
         Material lineMaterial = new Material(Shader.Find("Custom/AlwaysOnTopShader"));
         lineMaterial.SetColor("_Color", color);
@@ -264,9 +264,9 @@ public class MeshEditorController : MonoBehaviour
         BoxCollider collider = lineRenderer.gameObject.AddComponent<BoxCollider>();
 
         collider.size = new Vector3(
-            Mathf.Abs(direction.x) > 0 ? 1.0f : 0.05f,  // 如果是 X 轴，沿 X 方向设置长度
-            Mathf.Abs(direction.y) > 0 ? 1.0f : 0.05f,  // 如果是 Y 轴，沿 Y 方向设置长度
-            Mathf.Abs(direction.z) > 0 ? 1.0f : 0.05f   // 如果是 Z 轴，沿 Z 方向设置长度
+            Mathf.Abs(direction.x) > 0 ? 1.0f : 0.1f,  // 如果是 X 轴，沿 X 方向设置长度
+            Mathf.Abs(direction.y) > 0 ? 1.0f : 0.1f,  // 如果是 Y 轴，沿 Y 方向设置长度
+            Mathf.Abs(direction.z) > 0 ? 1.0f : 0.1f   // 如果是 Z 轴，沿 Z 方向设置长度
         );
 
         collider.center = direction * 0.5f; // 将碰撞器中心沿轴方向放置
