@@ -68,6 +68,25 @@ public class TopViewGizmoController : MonoBehaviour
     {
         if (!gizmo.gameObject.activeSelf) return false;
 
+        // 先检查是否点击了任何选中物体的图标
+        foreach (var obj in selectedObjects)
+        {
+            if (mapRenderer.GetRenderedIcons().TryGetValue(obj, out GameObject icon))
+            {
+                if (RectTransformUtility.RectangleContainsScreenPoint(
+                    icon.GetComponent<RectTransform>(),
+                    screenPosition,
+                    null))
+                {
+                    // 如果点击了物体图标，就像点击中心方块一样处理
+                    selectedAxis = BOTH_AXES;
+                    previousMousePosition = screenPosition;
+                    return true;
+                }
+            }
+        }
+
+        // 如果没有点击物体图标，继续检查坐标轴
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             mapRenderer.TopViewSelectionPanel,
             screenPosition,

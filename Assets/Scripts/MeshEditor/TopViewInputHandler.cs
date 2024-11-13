@@ -6,7 +6,6 @@ public class TopViewInputHandler : MonoBehaviour
     private TopViewSelectionLogic selectionLogic;
 
     private bool isDraggingAxis = false;
-
     private Vector2 startMousePosition;
 
     void Start()
@@ -36,22 +35,23 @@ public class TopViewInputHandler : MonoBehaviour
             startMousePosition = Input.mousePosition;
 
             isDraggingAxis = selectionLogic.GetComponent<TopViewGizmoController>().HandleAxisDrag(Input.mousePosition);
-            if (isDraggingAxis)
+
+            if (!isDraggingAxis)
             {
-                return;
+                selectionLogic.UpdateSelection(startMousePosition, Input.mousePosition);
             }
         }
         // Mouse left button hold
         else if (Input.GetMouseButton(0))
         {
-            // 如果正在拖动坐标轴
             if (isDraggingAxis)
             {
                 selectionLogic.GetComponent<TopViewGizmoController>().UpdateDrag(Input.mousePosition);
-                return;
             }
-
-            selectionLogic.UpdateSelection(startMousePosition, Input.mousePosition);
+            else
+            {
+                selectionLogic.UpdateSelection(startMousePosition, Input.mousePosition);
+            }
         }
         // Mouse left button up
         else if (Input.GetMouseButtonUp(0))
@@ -60,10 +60,8 @@ public class TopViewInputHandler : MonoBehaviour
             {
                 selectionLogic.GetComponent<TopViewGizmoController>().EndDrag();
                 isDraggingAxis = false;
-                return;
             }
-
-            if (Vector2.Distance(startMousePosition, Input.mousePosition) <= 1.0f)
+            else if (Vector2.Distance(startMousePosition, Input.mousePosition) <= 1.0f)
             {
                 selectionLogic.HandleSingleClick(Input.mousePosition);
             }
