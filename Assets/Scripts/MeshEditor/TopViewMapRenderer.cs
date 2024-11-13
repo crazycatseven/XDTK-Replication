@@ -18,6 +18,8 @@ public class TopViewMapRenderer : MonoBehaviour
 
     private Dictionary<GameObject, GameObject> renderedIcons = new Dictionary<GameObject, GameObject>();
 
+    // 添加 GizmoController 引用
+    private TopViewGizmoController gizmoController;
 
     void Start()
     {
@@ -26,7 +28,9 @@ public class TopViewMapRenderer : MonoBehaviour
         {
             defaultFont = Resources.GetBuiltinResource<Font>("LiberationSans.ttf");
         }
-        ToggleMapIcons(false);
+        
+        // 获取引用
+        gizmoController = GetComponent<TopViewGizmoController>();
     }
 
     void Update()
@@ -61,22 +65,30 @@ public class TopViewMapRenderer : MonoBehaviour
         GameObject mapIcon = null;
         RectTransform rectTransform = null;
 
+        float currentScale = scaleFactor > 0 ? scaleFactor : initialScaleFactor;
+
         if (obj.TryGetComponent(out BoxCollider boxCollider))
         {
             mapIcon = Instantiate(rectanglePrefab, TopViewSelectionPanel);
+            mapIcon.SetActive(false);
+            
             rectTransform = mapIcon.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(
-                obj.transform.localScale.x * boxCollider.size.x * scaleFactor,
-                obj.transform.localScale.z * boxCollider.size.z * scaleFactor);
+            Vector2 size = new Vector2(
+                obj.transform.localScale.x * boxCollider.size.x * currentScale,
+                obj.transform.localScale.z * boxCollider.size.z * currentScale);
+            rectTransform.sizeDelta = size;
         }
         else if (obj.TryGetComponent(out SphereCollider sphereCollider))
         {
             mapIcon = Instantiate(circlePrefab, TopViewSelectionPanel);
+            mapIcon.SetActive(false);
+            
             rectTransform = mapIcon.GetComponent<RectTransform>();
-            float diameter = sphereCollider.radius * 2 * scaleFactor;
-            rectTransform.sizeDelta = new Vector2(
+            float diameter = sphereCollider.radius * 2 * currentScale;
+            Vector2 size = new Vector2(
                 obj.transform.localScale.x * diameter,
                 obj.transform.localScale.z * diameter);
+            rectTransform.sizeDelta = size;
         }
 
         if (mapIcon != null)
@@ -180,6 +192,12 @@ public class TopViewMapRenderer : MonoBehaviour
             scaleFactor = Mathf.Clamp(scaleFactor, 10.0f, 1000.0f);
 
             UpdateIconsSize();
+            
+            // 使用新方法更新Gizmo位置
+            if (gizmoController != null)
+            {
+                gizmoController.UpdateGizmoPosition();
+            }
         }
     }
 
@@ -210,6 +228,12 @@ public class TopViewMapRenderer : MonoBehaviour
             TopViewSelectionPanel.anchoredPosition += delta;
 
             lastMousePosition = currentMousePosition;
+            
+            // 使用新方法更新Gizmo位置
+            if (gizmoController != null)
+            {
+                gizmoController.UpdateGizmoPosition();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(TopViewMapRenderer))]
 public class TopViewGizmoController : MonoBehaviour
 {
     public GameObject gizmoPrefab;
@@ -16,10 +17,18 @@ public class TopViewGizmoController : MonoBehaviour
     private TopViewMapRenderer mapRenderer;
     private const string BOTH_AXES = "BOTH";
     private HashSet<GameObject> selectedObjects = new HashSet<GameObject>();
+    private TopViewSelectionLogic selectionLogic;
 
     void Start()
     {
         mapRenderer = FindObjectOfType<TopViewMapRenderer>();
+        selectionLogic = GetComponent<TopViewSelectionLogic>();
+        
+        if (gizmoPrefab == null)
+        {
+            Debug.LogError("Gizmo Prefab 未在 Inspector 中赋值!");
+            return;
+        }
         InitializeGizmo();
         HideGizmo();
     }
@@ -68,25 +77,7 @@ public class TopViewGizmoController : MonoBehaviour
     {
         if (!gizmo.gameObject.activeSelf) return false;
 
-        // 先检查是否点击了任何选中物体的图标
-        foreach (var obj in selectedObjects)
-        {
-            if (mapRenderer.GetRenderedIcons().TryGetValue(obj, out GameObject icon))
-            {
-                if (RectTransformUtility.RectangleContainsScreenPoint(
-                    icon.GetComponent<RectTransform>(),
-                    screenPosition,
-                    null))
-                {
-                    // 如果点击了物体图标，就像点击中心方块一样处理
-                    selectedAxis = BOTH_AXES;
-                    previousMousePosition = screenPosition;
-                    return true;
-                }
-            }
-        }
-
-        // 如果没有点击物体图标，继续检查坐标轴
+        // 先检查坐标轴
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             mapRenderer.TopViewSelectionPanel,
             screenPosition,
@@ -117,6 +108,23 @@ public class TopViewGizmoController : MonoBehaviour
             dragStartPosition = localPoint;
             previousMousePosition = screenPosition;
             return true;
+        }
+
+        // 最后再检查物体图标
+        foreach (var obj in selectedObjects)
+        {
+            if (mapRenderer.GetRenderedIcons().TryGetValue(obj, out GameObject icon))
+            {
+                if (RectTransformUtility.RectangleContainsScreenPoint(
+                    icon.GetComponent<RectTransform>(),
+                    screenPosition,
+                    null))
+                {
+                    selectedAxis = BOTH_AXES;
+                    previousMousePosition = screenPosition;
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -167,5 +175,13 @@ public class TopViewGizmoController : MonoBehaviour
     private void HideGizmo()
     {
         gizmo.gameObject.SetActive(false);
+    }
+
+    public void UpdateGizmoPosition()
+    {
+        if (selectedObjects.Count > 0)
+        {
+            UpdateGizmoForSelection(selectedObjects);
+        }
     }
 }

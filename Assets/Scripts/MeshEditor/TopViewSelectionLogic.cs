@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +19,17 @@ public class TopViewSelectionLogic : MonoBehaviour
         feedback = GetComponent<TopViewFeedback>();
         gizmoController = GetComponent<TopViewGizmoController>();
 
+        StartCoroutine(InitializeWithDelay());
+    }
+
+    private IEnumerator InitializeWithDelay()
+    {
+        yield return null;
+        
         InitializeTrackedObjects();
+        
+        yield return null;
+        
         ToggleTopViewSelection(false);
     }
 
