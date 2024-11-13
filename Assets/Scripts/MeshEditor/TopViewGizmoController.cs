@@ -168,4 +168,13 @@ public class TopViewGizmoController : MonoBehaviour
     {
         gizmo.gameObject.SetActive(false);
     }
+
+    public void UpdateGizmoScale()
+    {
+        if (selectedObjects.Count > 0)
+        {
+            // 重新计算并更新Gizmo位置和大小
+            UpdateGizmoForSelection(selectedObjects);
+        }
+    }
 }

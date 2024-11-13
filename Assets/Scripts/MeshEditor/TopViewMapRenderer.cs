@@ -17,6 +17,7 @@ public class TopViewMapRenderer : MonoBehaviour
     public Font defaultFont;
 
     private Dictionary<GameObject, GameObject> renderedIcons = new Dictionary<GameObject, GameObject>();
+    private TopViewGizmoController gizmoController;
 
 
     void Start()
@@ -26,6 +27,7 @@ public class TopViewMapRenderer : MonoBehaviour
         {
             defaultFont = Resources.GetBuiltinResource<Font>("LiberationSans.ttf");
         }
+        gizmoController = GetComponent<TopViewGizmoController>();
         ToggleMapIcons(false);
     }
 
@@ -180,6 +182,7 @@ public class TopViewMapRenderer : MonoBehaviour
             scaleFactor = Mathf.Clamp(scaleFactor, 10.0f, 1000.0f);
 
             UpdateIconsSize();
+            gizmoController.UpdateGizmoScale();
         }
     }
 
