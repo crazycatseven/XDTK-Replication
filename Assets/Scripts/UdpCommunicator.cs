@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class UdpCommunicator
 {
@@ -12,6 +13,9 @@ public class UdpCommunicator
 
     public Action<string> OnMessageReceived;
     public int LocalPort { get; private set; }
+
+    private Queue<string> messageQueue = new Queue<string>();
+    private readonly object queueLock = new object();
 
     public UdpCommunicator(int localPort)
     {
@@ -90,9 +94,12 @@ public class UdpCommunicator
             byte[] receivedData = udpClient.EndReceive(ar, ref localEndPoint);
             string receivedMessage = Encoding.UTF8.GetString(receivedData);
             
-            OnMessageReceived?.Invoke(receivedMessage);
+            // 将消息加入队列而不是直接调用
+            lock (queueLock)
+            {
+                messageQueue.Enqueue(receivedMessage);
+            }
 
-            // 继续监听接收消息
             udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
         }
         catch (Exception e)
@@ -127,6 +134,20 @@ public class UdpCommunicator
         {
             udpClient.Close();
             Debug.Log("UDP Communicator closed.");
+        }
+    }
+
+    // 添加一个方法来处理主线程更新
+    public void Update()
+    {
+        if (messageQueue.Count > 0)
+        {
+            string message;
+            lock (queueLock)
+            {
+                message = messageQueue.Dequeue();
+            }
+            OnMessageReceived?.Invoke(message);
         }
     }
 }

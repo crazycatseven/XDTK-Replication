@@ -9,75 +9,75 @@ using UnityEngine.Android;
 using System.Collections.Generic;
 using UnityEngine.XR.ARFoundation;
 
-[RequireComponent(typeof(ArCameraDataSender))]
-[RequireComponent(typeof(ButtonEventManager))]
 
 public class AndroidUdpManager : MonoBehaviour
 {
 
+    [System.Serializable]
+    public class DataSenderConfig
+    {
+        public string senderName;
+        public bool isEnabled = true;
+    }
+
+    [Header("Data Senders Configuration")]
+    public DataSenderConfig[] dataSenderConfigs;
+
     [Header("Port")]
-    public int localPort = 9051;                  // 本地监听端口
+    public int localPort = 9982;                  // 本地监听端口
 
     [Header("UI")]
     public TMP_InputField ipInputField;
     public TMP_InputField portInputField;
     public Button connectButton;
     public TextMeshProUGUI debugText;
-
     public TextMeshProUGUI cameraDataText;
 
-    private ArCameraDataSender arCameraDataSender;
-    private ImageSender imageSender;
-    private ButtonEventManager buttonEventManager;
-    private List<JoystickEventManager> joystickEventManagers;
+    public SceneDataReceiver sceneDataReceiver;
+
+    private Dictionary<string, IDataSender> dataSenders = new Dictionary<string, IDataSender>();
+    private UdpCommunicator udpCommunicator;
+    private int remotePort;
+
     private void Awake()
     {
-        arCameraDataSender = GetComponent<ArCameraDataSender>();
-        buttonEventManager = GetComponent<ButtonEventManager>();
-        joystickEventManagers = new List<JoystickEventManager>();
-        joystickEventManagers.AddRange(GetComponents<JoystickEventManager>());
+        InitializeDataSenders();
     }
 
-    private int remotePort;  
-    private UdpCommunicator udpCommunicator;
-    private DeviceInfoSender deviceInfoSender;
-    private TouchScreenSender touchScreenSender;
-    private ARRaycastManager arRaycastManager;
-    private AROriginManager arOriginManager;
-    void Start()
+    private void InitializeDataSenders()
     {
-        arRaycastManager = FindObjectOfType<ARRaycastManager>();
-        arOriginManager = FindObjectOfType<AROriginManager>();
-        udpCommunicator = new UdpCommunicator(localPort);
-        udpCommunicator.OnMessageReceived = OnMessageReceived;
-
-        connectButton.onClick.AddListener(OnConnectButtonClicked);
-        
-
-        // 添加数据发送器
-        deviceInfoSender = new DeviceInfoSender(udpCommunicator);
-        imageSender = new ImageSender(udpCommunicator);
-        touchScreenSender = new TouchScreenSender(this, udpCommunicator, arRaycastManager, arOriginManager);
-        arCameraDataSender.SetUdpCommunicator(udpCommunicator);
-        buttonEventManager.SetUdpCommunicator(udpCommunicator);
-
-        foreach (JoystickEventManager joystickEventManager in joystickEventManagers)
+        var senders = GetComponents<IDataSender>();
+        foreach (var sender in senders)
         {
-            joystickEventManager.SetUdpCommunicator(udpCommunicator);
+            dataSenders[sender.SenderName] = sender;
+
+            var config = System.Array.Find(dataSenderConfigs,
+                x => x.senderName == sender.SenderName);
+
+            if (config != null)
+            {
+                sender.IsEnabled = config.isEnabled;
+            }
+
+            Debug.Log("Initialized data sender: " + sender.SenderName);
         }
 
-
-        ARPlaneInteraction arPlaneInteraction = FindObjectOfType<ARPlaneInteraction>();
-        arPlaneInteraction.udpCommunicator = udpCommunicator;
-        arPlaneInteraction.arOriginManager = arOriginManager;
     }
 
-    void Update()
+    void Start()
     {
-        // touchScreenSender.UpdateListening();
-        cameraDataText.text = arCameraDataSender.GetCameraData();
-    }
+        udpCommunicator = new UdpCommunicator(localPort);
+        connectButton.onClick.AddListener(OnConnectButtonClicked);
 
+        // 只为启用的发送器设置通信器
+        foreach (var sender in dataSenders.Values)
+        {
+            if (sender.IsEnabled)
+            {
+                sender.SetUdpCommunicator(udpCommunicator);
+            }
+        }
+    }
 
     // 当点击连接按钮时调用
     private void OnConnectButtonClicked()
@@ -86,13 +86,6 @@ public class AndroidUdpManager : MonoBehaviour
         remotePort = int.Parse(portInputField.text);
         udpCommunicator.SetRemoteEndPoint(ipAddress, remotePort);
         debugText.text = "Connected to " + ipAddress;
-
-        deviceInfoSender.SendDeviceInfo();
-    }
-
-    public void SendImage(Texture2D image)
-    {
-        imageSender.SendImage(image);
     }
 
     // 处理接收到的消息
@@ -106,6 +99,14 @@ public class AndroidUdpManager : MonoBehaviour
         if (udpCommunicator != null)
         {
             udpCommunicator.Close();
+        }
+    }
+
+    void Update()
+    {
+        if (udpCommunicator != null)
+        {
+            udpCommunicator.Update();
         }
     }
 }

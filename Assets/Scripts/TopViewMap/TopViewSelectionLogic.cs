@@ -5,33 +5,155 @@ using UnityEngine.UI;
 
 public class TopViewSelectionLogic : MonoBehaviour
 {
-    private TopViewMapRenderer mapRenderer;
+    public SceneDataReceiver sceneDataReceiver;
+    public SceneDataSender sceneDataSender;
+    public TopViewMapRenderer mapRenderer;
+    public SceneObjectCollector sceneCollector;
     private TopViewFeedback feedback;
     private HashSet<GameObject> trackedObjects = new HashSet<GameObject>();
     private HashSet<GameObject> selectedObjects = new HashSet<GameObject>();
     private TopViewGizmoController gizmoController;
     private bool isEnabled = false;
+    private Dictionary<string, GameObject> objectIdMap = new Dictionary<string, GameObject>();
+
 
 
     void Start()
     {
-        mapRenderer = FindObjectOfType<TopViewMapRenderer>();
+        // 添加空检查
+        if (mapRenderer == null)
+        {
+            mapRenderer = FindObjectOfType<TopViewMapRenderer>();
+            Debug.LogWarning("MapRenderer not assigned, trying to find in scene");
+        }
+        
+
+        if (sceneCollector == null)
+        {
+            sceneCollector = GetComponent<SceneObjectCollector>();
+            Debug.LogWarning("SceneCollector not assigned, trying to get from this GameObject");
+        }
+
         feedback = GetComponent<TopViewFeedback>();
         gizmoController = GetComponent<TopViewGizmoController>();
 
-        StartCoroutine(InitializeWithDelay());
+        // 验证必要组件
+        if (mapRenderer == null || sceneCollector == null || sceneDataSender == null)
+        {
+            Debug.LogError("Required components missing in TopViewSelectionLogic");
+            enabled = false;  // 禁用这个组件
+        }
+
+        // StartCoroutine(InitializeWithDelay());
     }
 
-    private IEnumerator InitializeWithDelay()
+    public void HandleSceneData(string jsonData)
     {
-        yield return null;
-        
-        InitializeTrackedObjects();
-        
-        yield return null;
-        
-        ToggleTopViewSelection(false);
+        if (sceneCollector == null || mapRenderer == null)
+        {
+            Debug.LogError("Required components missing when handling scene data");
+            return;
+        }
+
+        SceneObjectCollector.SceneData sceneData = sceneCollector.ParseSceneData(jsonData);
+        if (sceneData == null) 
+        {
+            Debug.LogError("Failed to parse scene data");
+            return;
+        }
+
+        // 清除现有的跟踪对象
+        ClearTrackedObjects();
+        Debug.Log("Cleared tracked objects");
+
+        // 为每个场景对象创建临时GameObject并添加到跟踪列表
+        Debug.Log("Creating temp game objects for scene data");
+        foreach (var objData in sceneData.objects)
+        {
+            GameObject tempObj = CreateTempGameObject(objData);
+            trackedObjects.Add(tempObj);
+            mapRenderer.GenerateMapIcon(tempObj);
+        }
+        // 打印跟踪对象的数量
+        Debug.Log("Tracked objects count: " + trackedObjects.Count);
     }
+
+    private GameObject CreateTempGameObject(SceneObjectCollector.ObjectData objData)
+    {
+        GameObject obj = new GameObject(objData.name);
+        obj.transform.position = objData.position;
+        obj.transform.localScale = objData.scale;
+
+        if (objData.colliderType == "Box")
+        {
+            BoxCollider collider = obj.AddComponent<BoxCollider>();
+            collider.size = objData.colliderData;
+        }
+        else if (objData.colliderType == "Sphere")
+        {
+            SphereCollider collider = obj.AddComponent<SphereCollider>();
+            collider.radius = objData.colliderData.x;
+        }
+
+        objectIdMap[objData.id] = obj;
+        return obj;
+    }
+
+
+    public void SendObjectPositionUpdate(GameObject obj)
+    {
+        if (sceneDataSender == null || !trackedObjects.Contains(obj)) return;
+
+        var objectData = new SceneObjectCollector.ObjectData
+        {
+            id = obj.GetInstanceID().ToString(),
+            name = obj.name,
+            position = obj.transform.position,
+            scale = obj.transform.localScale
+        };
+
+        string jsonData = JsonUtility.ToJson(objectData);
+        sceneDataSender.SendObjectUpdate(objectData.id, jsonData);
+    }
+
+    private void ClearTrackedObjects()
+    {
+        ClearSelection();
+        foreach (var obj in trackedObjects)
+        {
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+        trackedObjects.Clear();
+        objectIdMap.Clear();
+        mapRenderer.ClearAllIcons();
+    }
+
+
+    // private IEnumerator InitializeWithDelay()
+    // {
+    //     yield return null;
+
+    //     InitializeTrackedObjects();
+
+    //     yield return null;
+
+    //     ToggleTopViewSelection(false);
+    // }
+
+    // private void InitializeTrackedObjects()
+    // {
+    //     foreach (var obj in FindObjectsOfType<GameObject>())
+    //     {
+    //         if (obj.TryGetComponent(out Collider collider) && obj.TryGetComponent(out MeshRenderer meshRenderer))
+    //         {
+    //             trackedObjects.Add(obj);
+    //             mapRenderer.GenerateMapIcon(obj);
+    //         }
+    //     }
+    // }
 
     public void ToggleTopViewSelection(bool enable)
     {
@@ -45,17 +167,12 @@ public class TopViewSelectionLogic : MonoBehaviour
     }
 
 
-
-
-    private void InitializeTrackedObjects()
+    public void RefreshSceneData()
     {
-        foreach (var obj in FindObjectsOfType<GameObject>())
+        if (sceneDataReceiver != null)
         {
-            if (obj.TryGetComponent(out Collider collider) && obj.TryGetComponent(out MeshRenderer meshRenderer))
-            {
-                trackedObjects.Add(obj);
-                mapRenderer.GenerateMapIcon(obj);
-            }
+            sceneDataReceiver.RequestSceneData();
+            Debug.Log("Requesting scene data refresh...");
         }
     }
 

@@ -274,4 +274,16 @@ public class TopViewMapRenderer : MonoBehaviour
         }
     }
 
+    public void ClearAllIcons()
+    {
+        foreach (var icon in renderedIcons.Values)
+        {
+            if (icon != null)
+            {
+                Destroy(icon);
+            }
+        }
+        renderedIcons.Clear();
+    }
+
 }

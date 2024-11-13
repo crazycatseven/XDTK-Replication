@@ -7,25 +7,45 @@ using System.Net.NetworkInformation;
 
 public class PcUdpManager : MonoBehaviour
 {
-    public int localPort = 9052;
+    public int localPort = 9082;
+    public int remotePort = 9051;
+    public string ipAddress = "192.168.1.100";
     private UdpCommunicator udpCommunicator;
+    private SceneDataSender sceneDataSender;
 
     void Start()
     {
+        sceneDataSender = GetComponent<SceneDataSender>();
+        if (sceneDataSender == null)
+        {
+            Debug.LogError("PcUdpManager requires SceneDataSender component!");
+            return;
+        }
+
         udpCommunicator = new UdpCommunicator(localPort);
         udpCommunicator.OnMessageReceived = OnMessageReceived;
+        
+        sceneDataSender.SetUdpCommunicator(udpCommunicator);
+
+        udpCommunicator.SetRemoteEndPoint(ipAddress, remotePort);
     }
 
     private void OnMessageReceived(string message)
     {
-        // 处理接收到的信息
-
+        Debug.Log("Received message: " + message);
         string[] parts = message.Split('|');
-        string messageType = parts[0];
-        string payload = parts[1];
+        if (parts.Length != 3) return;
 
-        switch (messageType)
+        string messageType = parts[0];
+        string messageName = parts[1];
+        string payload = parts[2];
+
+        switch (messageName)
         {
+            case "RequestSceneData":
+                Debug.Log("Got request for scene data");
+                sceneDataSender.SendSceneData(true);
+                break;
             case "DeviceInfo":
                 Debug.Log("New device connected: " + payload);
                 break;
@@ -71,6 +91,14 @@ public class PcUdpManager : MonoBehaviour
         if (udpCommunicator != null)
         {
             udpCommunicator.Close();
+        }
+    }
+
+    void Update()
+    {
+        if (udpCommunicator != null)
+        {
+            udpCommunicator.Update();
         }
     }
 }

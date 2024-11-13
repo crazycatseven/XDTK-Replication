@@ -1,8 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TopViewInputHandler : MonoBehaviour
 {
     public KeyCode toggleMapKey = KeyCode.T;
+    public Button toggleMapButton;
+    public Button refreshMapButton;
     private TopViewSelectionLogic selectionLogic;
 
     private bool isDraggingAxis = false;
@@ -12,6 +15,19 @@ public class TopViewInputHandler : MonoBehaviour
     void Start()
     {
         selectionLogic = GetComponent<TopViewSelectionLogic>();
+        if (toggleMapButton != null)
+        {
+            toggleMapButton.onClick.AddListener(() =>
+            {
+                selectionLogic.ToggleMap();
+            });
+        }
+
+
+        if (refreshMapButton != null)
+        {
+            refreshMapButton.onClick.AddListener(() => selectionLogic.RefreshSceneData());
+        }
     }
 
     void Update()

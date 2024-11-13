@@ -13,7 +13,7 @@ public class ARInteraction : MonoBehaviour
     public void SendPhoto()
     {
         Texture2D photo = TakePhoto();
-        androidUdpManager.SendImage(photo);
+        // androidUdpManager.SendImage(photo);
     }
 
     public Texture2D TakePhoto()
