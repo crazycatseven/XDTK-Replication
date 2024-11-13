@@ -7,12 +7,14 @@ public class TopViewSelectionLogic : MonoBehaviour
     private TopViewFeedback feedback;
     private HashSet<GameObject> trackedObjects = new HashSet<GameObject>();
     private HashSet<GameObject> selectedObjects = new HashSet<GameObject>();
+    private TopViewGizmoController gizmoController;
 
 
     void Start()
     {
         mapRenderer = FindObjectOfType<TopViewMapRenderer>();
         feedback = GetComponent<TopViewFeedback>();
+        gizmoController = GetComponent<TopViewGizmoController>();
 
         InitializeTrackedObjects();
     }
@@ -29,20 +31,32 @@ public class TopViewSelectionLogic : MonoBehaviour
         }
     }
 
-    public void StartSelection(Vector2 startMousePosition)
-    {
-        feedback.ShowSelectionBox(true);
-        ClearSelection();
-    }
 
     public void UpdateSelection(Vector2 startMousePosition, Vector2 currentMousePosition)
     {
-        feedback.UpdateSelectionBox(startMousePosition, currentMousePosition);
+        if (Vector2.Distance(startMousePosition, currentMousePosition) > 0.01f)
+        {
+            feedback.ShowSelectionBox(true);
+            feedback.UpdateSelectionBox(startMousePosition, currentMousePosition);
+        }
     }
 
     public void EndSelection(Vector2 startMousePosition, Vector2 currentMousePosition)
     {
-        SelectObjectsInBox(startMousePosition, currentMousePosition);
+        if (Vector2.Distance(startMousePosition, currentMousePosition) > 0.01f)
+        {
+            HashSet<GameObject> newSelection = GetObjectsInBox(startMousePosition, currentMousePosition);
+
+            ClearSelection();
+
+            if (newSelection.Count > 0)
+            {
+                foreach (var obj in newSelection)
+                {
+                    SelectObject(obj);
+                }
+            }
+        }
         feedback.ShowSelectionBox(false);
     }
 
@@ -51,17 +65,10 @@ public class TopViewSelectionLogic : MonoBehaviour
         mapRenderer.ToggleMapIcons(isActive);
     }
 
-    private void ClearSelection()
+    private HashSet<GameObject> GetObjectsInBox(Vector2 start, Vector2 end)
     {
-        foreach (var obj in selectedObjects)
-        {
-            ResetHighlight(obj);
-        }
-        selectedObjects.Clear();
-    }
+        HashSet<GameObject> objectsInBox = new HashSet<GameObject>();
 
-    private void SelectObjectsInBox(Vector2 start, Vector2 end)
-    {
         RectTransform canvasRect = mapRenderer.TopViewSelectionPanel;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, start, null, out Vector2 localStart);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, end, null, out Vector2 localEnd);
@@ -75,14 +82,50 @@ public class TopViewSelectionLogic : MonoBehaviour
             RectTransform iconRectTransform = kvp.Value.GetComponent<RectTransform>();
             Vector2 iconPos = iconRectTransform.anchoredPosition;
 
-            Debug.Log($"Selection Box: {boxMin} - {boxMax}, Icon Position: {iconPos}");
-
             if (iconPos.x >= boxMin.x && iconPos.x <= boxMax.x &&
                 iconPos.y >= boxMin.y && iconPos.y <= boxMax.y &&
                 trackedObjects.Contains(obj))
             {
-                SelectObject(obj);
+                objectsInBox.Add(obj);
             }
+        }
+
+        return objectsInBox;
+    }
+
+    public void HandleSingleClick(Vector2 clickPosition)
+    {
+        RectTransform canvasRect = mapRenderer.TopViewSelectionPanel;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, clickPosition, null, out Vector2 localClickPos);
+
+        GameObject clickedObject = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var kvp in mapRenderer.GetRenderedIcons())
+        {
+            GameObject obj = kvp.Key;
+            RectTransform iconRectTransform = kvp.Value.GetComponent<RectTransform>();
+            Vector2 iconPos = iconRectTransform.anchoredPosition;
+            Vector2 iconSize = iconRectTransform.sizeDelta;
+
+            if (localClickPos.x >= iconPos.x - iconSize.x / 2 && localClickPos.x <= iconPos.x + iconSize.x / 2 &&
+                localClickPos.y >= iconPos.y - iconSize.y / 2 && localClickPos.y <= iconPos.y + iconSize.y / 2 &&
+                trackedObjects.Contains(obj))
+            {
+                float distance = Vector2.Distance(localClickPos, iconPos);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    clickedObject = obj;
+                }
+            }
+        }
+
+        ClearSelection();
+
+        if (clickedObject != null)
+        {
+            SelectObject(clickedObject);
         }
     }
 
@@ -92,6 +135,18 @@ public class TopViewSelectionLogic : MonoBehaviour
         if (selectedObjects.Contains(obj)) return;
         selectedObjects.Add(obj);
         HighlightObject(obj);
+        gizmoController.UpdateGizmoForSelection(selectedObjects);
+    }
+
+
+    private void ClearSelection()
+    {
+        foreach (var obj in selectedObjects)
+        {
+            ResetHighlight(obj);
+        }
+        selectedObjects.Clear();
+        gizmoController.UpdateGizmoForSelection(selectedObjects);
     }
 
     void HighlightObject(GameObject obj)

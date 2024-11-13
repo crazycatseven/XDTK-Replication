@@ -5,6 +5,7 @@ public class TopViewInputHandler : MonoBehaviour
     public KeyCode toggleMapKey = KeyCode.T;
     private TopViewSelectionLogic selectionLogic;
     private bool isMapActive = false;
+    private bool isDraggingAxis = false;
 
     private Vector2 startMousePosition;
 
@@ -32,23 +33,51 @@ public class TopViewInputHandler : MonoBehaviour
         selectionLogic.ToggleMap(isMapActive);
     }
 
+
+
     void HandleSelectionInput()
     {
         // Mouse left button down
         if (Input.GetMouseButtonDown(0))
         {
             startMousePosition = Input.mousePosition;
-            selectionLogic.StartSelection(startMousePosition);
+
+            isDraggingAxis = selectionLogic.GetComponent<TopViewGizmoController>().HandleAxisDrag(Input.mousePosition);
+            if (isDraggingAxis)
+            {
+                return;
+            }
         }
         // Mouse left button hold
         else if (Input.GetMouseButton(0))
         {
+            // 如果正在拖动坐标轴
+            if (isDraggingAxis)
+            {
+                selectionLogic.GetComponent<TopViewGizmoController>().UpdateDrag(Input.mousePosition);
+                return;
+            }
+
             selectionLogic.UpdateSelection(startMousePosition, Input.mousePosition);
         }
         // Mouse left button up
         else if (Input.GetMouseButtonUp(0))
         {
-            selectionLogic.EndSelection(startMousePosition, Input.mousePosition);
+            if (isDraggingAxis)
+            {
+                selectionLogic.GetComponent<TopViewGizmoController>().EndDrag();
+                isDraggingAxis = false;
+                return;
+            }
+
+            if (Vector2.Distance(startMousePosition, Input.mousePosition) <= 0.01f)
+            {
+                selectionLogic.HandleSingleClick(Input.mousePosition);
+            }
+            else
+            {
+                selectionLogic.EndSelection(startMousePosition, Input.mousePosition);
+            }
         }
     }
 }

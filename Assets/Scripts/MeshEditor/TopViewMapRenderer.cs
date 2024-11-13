@@ -45,14 +45,18 @@ public class TopViewMapRenderer : MonoBehaviour
         {
             mapIcon = Instantiate(rectanglePrefab, TopViewSelectionPanel);
             rectTransform = mapIcon.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(boxCollider.size.x * scaleFactor, boxCollider.size.z * scaleFactor);
+            rectTransform.sizeDelta = new Vector2(
+                obj.transform.localScale.x * boxCollider.size.x * scaleFactor,
+                obj.transform.localScale.z * boxCollider.size.z * scaleFactor);
         }
         else if (obj.TryGetComponent(out SphereCollider sphereCollider))
         {
             mapIcon = Instantiate(circlePrefab, TopViewSelectionPanel);
             rectTransform = mapIcon.GetComponent<RectTransform>();
             float diameter = sphereCollider.radius * 2 * scaleFactor;
-            rectTransform.sizeDelta = new Vector2(diameter, diameter);
+            rectTransform.sizeDelta = new Vector2(
+                obj.transform.localScale.x * diameter,
+                obj.transform.localScale.z * diameter);
         }
 
         if (mapIcon != null)
@@ -93,12 +97,16 @@ public class TopViewMapRenderer : MonoBehaviour
 
             if (obj.TryGetComponent(out BoxCollider boxCollider))
             {
-                rectTransform.sizeDelta = new Vector2(boxCollider.size.x * scaleFactor, boxCollider.size.z * scaleFactor);
+                rectTransform.sizeDelta = new Vector2(
+                    obj.transform.localScale.x * boxCollider.size.x * scaleFactor,
+                    obj.transform.localScale.z * boxCollider.size.z * scaleFactor);
             }
             else if (obj.TryGetComponent(out SphereCollider sphereCollider))
             {
                 float diameter = sphereCollider.radius * 2 * scaleFactor;
-                rectTransform.sizeDelta = new Vector2(diameter, diameter);
+                rectTransform.sizeDelta = new Vector2(
+                    obj.transform.localScale.x * diameter,
+                    obj.transform.localScale.z * diameter);
             }
         }
     }
@@ -114,6 +122,11 @@ public class TopViewMapRenderer : MonoBehaviour
 
             UpdateIconsSize();
         }
+    }
+
+    public float GetCurrentScale()
+    {
+        return scaleFactor;
     }
 
 
@@ -141,7 +154,7 @@ public class TopViewMapRenderer : MonoBehaviour
         }
     }
 
-    private Vector2 WorldToMapPosition(Vector3 worldPosition)
+    public Vector2 WorldToMapPosition(Vector3 worldPosition)
     {
         float mapX = worldPosition.x * scaleFactor + panOffset.x;
         float mapY = worldPosition.z * scaleFactor + panOffset.y;
