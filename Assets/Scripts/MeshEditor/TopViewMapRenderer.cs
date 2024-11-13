@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TopViewMapRenderer : MonoBehaviour
 {
@@ -7,12 +8,13 @@ public class TopViewMapRenderer : MonoBehaviour
     public GameObject rectanglePrefab;
     public GameObject circlePrefab;
     public float initialScaleFactor = 100.0f;
-
+    public int fontSize = 42;
 
     private float scaleFactor;
     private Vector2 panOffset = Vector2.zero;
     private bool isPanning = false;
     private Vector2 lastMousePosition;
+    public Font defaultFont;
 
     private Dictionary<GameObject, GameObject> renderedIcons = new Dictionary<GameObject, GameObject>();
 
@@ -20,6 +22,11 @@ public class TopViewMapRenderer : MonoBehaviour
     void Start()
     {
         scaleFactor = initialScaleFactor;
+        if (defaultFont == null)
+        {
+            defaultFont = Resources.GetBuiltinResource<Font>("LiberationSans.ttf");
+        }
+        ToggleMapIcons(false);
     }
 
     void Update()
@@ -27,6 +34,19 @@ public class TopViewMapRenderer : MonoBehaviour
         HandleZoom();
         HandlePan();
         UpdateIconsPosition();
+    }
+
+    public void ToggleMapIcons(bool isActive)
+    {
+        if (renderedIcons == null) return;
+
+        foreach (var icon in renderedIcons.Values)
+        {
+            if (icon != null)
+            {
+                icon.SetActive(isActive);
+            }
+        }
     }
 
 
@@ -61,9 +81,48 @@ public class TopViewMapRenderer : MonoBehaviour
 
         if (mapIcon != null)
         {
+            Image iconImage = mapIcon.GetComponent<Image>();
+            if (iconImage != null)
+            {
+                iconImage.color = new Color(1f, 1f, 1f, 0.5f);
+            }
+
+            GameObject labelObj = new GameObject("Label");
+            labelObj.transform.SetParent(mapIcon.transform);
+            
+            Canvas labelCanvas = labelObj.AddComponent<Canvas>();
+            labelCanvas.overrideSorting = true;
+            labelCanvas.sortingOrder = 1000;
+
+            RectTransform labelRect = labelObj.GetComponent<RectTransform>();
+            labelRect.anchorMin = new Vector2(0.5f, 0);
+            labelRect.anchorMax = new Vector2(0.5f, 0);
+            labelRect.pivot = new Vector2(0.5f, 1);
+            
+            float iconHeight = rectTransform.sizeDelta.y;
+            labelRect.anchoredPosition = new Vector2(0, -iconHeight * 0.2f);
+            
+            ContentSizeFitter fitter = labelObj.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            
+            Outline outline = labelObj.AddComponent<Outline>();
+            outline.effectColor = Color.black;
+            outline.effectDistance = new Vector2(2, -2);
+            outline.useGraphicAlpha = false;
+            
+            Text label = labelObj.AddComponent<Text>();
+            label.text = obj.name;
+            label.font = defaultFont;
+            label.fontSize = fontSize;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.color = Color.white;
+            
+            labelRect.sizeDelta = new Vector2(0, 0);
+            
             Vector2 mapPos = WorldToMapPosition(obj.transform.position);
             rectTransform.anchoredPosition = mapPos;
-
+            
             renderedIcons[obj] = mapIcon;
         }
 
@@ -161,17 +220,34 @@ public class TopViewMapRenderer : MonoBehaviour
         return new Vector2(mapX, mapY);
     }
 
-    public void ToggleMapIcons(bool isActive)
-    {
-        foreach (var icon in renderedIcons.Values)
-        {
-            icon.SetActive(isActive);
-        }
-    }
 
     public Dictionary<GameObject, GameObject> GetRenderedIcons()
     {
         return renderedIcons;
+    }
+
+    public void HighlightIcon(GameObject worldObject)
+    {
+        if (renderedIcons.TryGetValue(worldObject, out GameObject icon))
+        {
+            Image iconImage = icon.GetComponent<Image>();
+            if (iconImage != null)
+            {
+                iconImage.color = new Color(1f, 1f, 0f, 0.8f);
+            }
+        }
+    }
+
+    public void ResetIconHighlight(GameObject worldObject)
+    {
+        if (renderedIcons.TryGetValue(worldObject, out GameObject icon))
+        {
+            Image iconImage = icon.GetComponent<Image>();
+            if (iconImage != null)
+            {
+                iconImage.color = new Color(1f, 1f, 1f, 0.5f);
+            }
+        }
     }
 
 }

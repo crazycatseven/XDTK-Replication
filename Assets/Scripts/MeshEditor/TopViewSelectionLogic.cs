@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TopViewSelectionLogic : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class TopViewSelectionLogic : MonoBehaviour
     private HashSet<GameObject> trackedObjects = new HashSet<GameObject>();
     private HashSet<GameObject> selectedObjects = new HashSet<GameObject>();
     private TopViewGizmoController gizmoController;
+    private bool isEnabled = false;
 
 
     void Start()
@@ -17,7 +19,22 @@ public class TopViewSelectionLogic : MonoBehaviour
         gizmoController = GetComponent<TopViewGizmoController>();
 
         InitializeTrackedObjects();
+        ToggleTopViewSelection(false);
     }
+
+    public void ToggleTopViewSelection(bool enable)
+    {
+        isEnabled = enable;
+        mapRenderer.ToggleMapIcons(enable);
+
+        if (!enable)
+        {
+            ClearSelection();
+        }
+    }
+
+
+
 
     private void InitializeTrackedObjects()
     {
@@ -34,7 +51,7 @@ public class TopViewSelectionLogic : MonoBehaviour
 
     public void UpdateSelection(Vector2 startMousePosition, Vector2 currentMousePosition)
     {
-        if (Vector2.Distance(startMousePosition, currentMousePosition) > 0.01f)
+        if (Vector2.Distance(startMousePosition, currentMousePosition) > 1.0f)
         {
             feedback.ShowSelectionBox(true);
             feedback.UpdateSelectionBox(startMousePosition, currentMousePosition);
@@ -43,7 +60,7 @@ public class TopViewSelectionLogic : MonoBehaviour
 
     public void EndSelection(Vector2 startMousePosition, Vector2 currentMousePosition)
     {
-        if (Vector2.Distance(startMousePosition, currentMousePosition) > 0.01f)
+        if (Vector2.Distance(startMousePosition, currentMousePosition) > 1.0f)
         {
             HashSet<GameObject> newSelection = GetObjectsInBox(startMousePosition, currentMousePosition);
 
@@ -60,9 +77,9 @@ public class TopViewSelectionLogic : MonoBehaviour
         feedback.ShowSelectionBox(false);
     }
 
-    public void ToggleMap(bool isActive)
+    public void ToggleMap()
     {
-        mapRenderer.ToggleMapIcons(isActive);
+        ToggleTopViewSelection(!isEnabled);
     }
 
     private HashSet<GameObject> GetObjectsInBox(Vector2 start, Vector2 end)
@@ -133,8 +150,10 @@ public class TopViewSelectionLogic : MonoBehaviour
     private void SelectObject(GameObject obj)
     {
         if (selectedObjects.Contains(obj)) return;
+        
         selectedObjects.Add(obj);
         HighlightObject(obj);
+        mapRenderer.HighlightIcon(obj);
         gizmoController.UpdateGizmoForSelection(selectedObjects);
     }
 
@@ -144,6 +163,7 @@ public class TopViewSelectionLogic : MonoBehaviour
         foreach (var obj in selectedObjects)
         {
             ResetHighlight(obj);
+            mapRenderer.ResetIconHighlight(obj);
         }
         selectedObjects.Clear();
         gizmoController.UpdateGizmoForSelection(selectedObjects);
@@ -171,4 +191,10 @@ public class TopViewSelectionLogic : MonoBehaviour
     {
         return selectedObjects;
     }
+
+    public bool IsEnabled()
+    {
+        return isEnabled;
+    }
+
 }

@@ -477,7 +477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1304289535
 RectTransform:
   m_ObjectHideFlags: 0
@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 1403329714}
   - component: {fileID: 1403329713}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: flower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1162,6 +1162,12 @@ MonoBehaviour:
   circlePrefab: {fileID: 6934558203536270344, guid: ff8bbfd71ba78604da1434944f5dcd0c,
     type: 3}
   initialScaleFactor: 100
+  fontSize: 42
+  defaultFont: {fileID: 12800000, guid: 1264fb4e9199ffe4181b381f77bb75d8, type: 3}
+  categoryIcons:
+  - category: flower
+    categoryIcon: {fileID: 21300000, guid: 78c7fc6a3444acf4fa6b34a35d1fbd89, type: 3}
+    iconSizeRatio: 0.6
 --- !u!114 &1892177499
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ public class TopViewInputHandler : MonoBehaviour
 {
     public KeyCode toggleMapKey = KeyCode.T;
     private TopViewSelectionLogic selectionLogic;
-    private bool isMapActive = false;
+
     private bool isDraggingAxis = false;
 
     private Vector2 startMousePosition;
@@ -18,21 +18,14 @@ public class TopViewInputHandler : MonoBehaviour
     {
         if (Input.GetKeyDown(toggleMapKey))
         {
-            ToggleMap();
+            selectionLogic.ToggleMap();
         }
 
-        if (isMapActive)
+        if (selectionLogic.IsEnabled())
         {
             HandleSelectionInput();
         }
     }
-
-    void ToggleMap()
-    {
-        isMapActive = !isMapActive;
-        selectionLogic.ToggleMap(isMapActive);
-    }
-
 
 
     void HandleSelectionInput()
@@ -70,7 +63,7 @@ public class TopViewInputHandler : MonoBehaviour
                 return;
             }
 
-            if (Vector2.Distance(startMousePosition, Input.mousePosition) <= 0.01f)
+            if (Vector2.Distance(startMousePosition, Input.mousePosition) <= 1.0f)
             {
                 selectionLogic.HandleSingleClick(Input.mousePosition);
             }
