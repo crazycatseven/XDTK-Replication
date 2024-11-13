@@ -18,6 +18,8 @@ public class TopViewMapRenderer : MonoBehaviour
 
     private Dictionary<GameObject, GameObject> renderedIcons = new Dictionary<GameObject, GameObject>();
 
+    // 添加 GizmoController 引用
+    private TopViewGizmoController gizmoController;
 
     void Start()
     {
@@ -26,6 +28,9 @@ public class TopViewMapRenderer : MonoBehaviour
         {
             defaultFont = Resources.GetBuiltinResource<Font>("LiberationSans.ttf");
         }
+        
+        // 获取引用
+        gizmoController = GetComponent<TopViewGizmoController>();
     }
 
     void Update()
@@ -187,6 +192,12 @@ public class TopViewMapRenderer : MonoBehaviour
             scaleFactor = Mathf.Clamp(scaleFactor, 10.0f, 1000.0f);
 
             UpdateIconsSize();
+            
+            // 使用新方法更新Gizmo位置
+            if (gizmoController != null)
+            {
+                gizmoController.UpdateGizmoPosition();
+            }
         }
     }
 
@@ -217,6 +228,12 @@ public class TopViewMapRenderer : MonoBehaviour
             TopViewSelectionPanel.anchoredPosition += delta;
 
             lastMousePosition = currentMousePosition;
+            
+            // 使用新方法更新Gizmo位置
+            if (gizmoController != null)
+            {
+                gizmoController.UpdateGizmoPosition();
+            }
         }
     }
 
