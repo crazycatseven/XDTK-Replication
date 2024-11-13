@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(TopViewMapRenderer))]
 public class TopViewGizmoController : MonoBehaviour
 {
     public GameObject gizmoPrefab;
@@ -20,6 +21,11 @@ public class TopViewGizmoController : MonoBehaviour
     void Start()
     {
         mapRenderer = FindObjectOfType<TopViewMapRenderer>();
+        if (gizmoPrefab == null)
+        {
+            Debug.LogError("Gizmo Prefab 未在 Inspector 中赋值!");
+            return;
+        }
         InitializeGizmo();
         HideGizmo();
     }
@@ -161,11 +167,17 @@ public class TopViewGizmoController : MonoBehaviour
 
     private void ShowGizmo()
     {
-        gizmo.gameObject.SetActive(true);
+        if (gizmo != null && gizmo.gameObject != null)
+        {
+            gizmo.gameObject.SetActive(true);
+        }
     }
 
     private void HideGizmo()
     {
-        gizmo.gameObject.SetActive(false);
+        if (gizmo != null && gizmo.gameObject != null)
+        {
+            gizmo.gameObject.SetActive(false);
+        }
     }
 }
