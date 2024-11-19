@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ARInteraction : MonoBehaviour
 {
-    private AndroidUdpManager androidUdpManager;
-    void Start()
-    {
-        androidUdpManager = GetComponent<AndroidUdpManager>();
-    }
+    // private AndroidUdpManager androidUdpManager;
+    // void Start()
+    // {
+    //     androidUdpManager = GetComponent<AndroidUdpManager>();
+    // }
 
     public void SendPhoto()
     {

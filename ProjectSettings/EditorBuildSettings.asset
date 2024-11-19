@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/TopViewMapTest_Android.unity
-    guid: db2495c676a0ff84b95bb7c80284e31b
+    path: Assets/Scenes/Android_Scene.unity
+    guid: 578ac91b527c15b4db698719b7663aee
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 0bba87c3b3421ce41aff2c572702397f,
       type: 2}

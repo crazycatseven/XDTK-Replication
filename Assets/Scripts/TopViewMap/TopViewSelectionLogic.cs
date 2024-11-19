@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+
 
 public class TopViewSelectionLogic : MonoBehaviour
 {
-    public SceneDataReceiver sceneDataReceiver;
-    public SceneDataSender sceneDataSender;
+    public ObjectUpdateProvider objectUpdateProvider;
     public TopViewMapRenderer mapRenderer;
-    public SceneObjectCollector sceneCollector;
     private TopViewFeedback feedback;
     private HashSet<GameObject> trackedObjects = new HashSet<GameObject>();
     private HashSet<GameObject> selectedObjects = new HashSet<GameObject>();
@@ -16,57 +16,43 @@ public class TopViewSelectionLogic : MonoBehaviour
     private bool isEnabled = false;
     private Dictionary<string, GameObject> objectIdMap = new Dictionary<string, GameObject>();
 
-
-
     void Start()
     {
-        // 添加空检查
         if (mapRenderer == null)
         {
             mapRenderer = FindObjectOfType<TopViewMapRenderer>();
             Debug.LogWarning("MapRenderer not assigned, trying to find in scene");
         }
-        
 
-        if (sceneCollector == null)
+        if (objectUpdateProvider == null)
         {
-            sceneCollector = GetComponent<SceneObjectCollector>();
-            Debug.LogWarning("SceneCollector not assigned, trying to get from this GameObject");
+            objectUpdateProvider = FindObjectOfType<ObjectUpdateProvider>();
+            Debug.LogWarning("SceneDataProvider not assigned, trying to find in scene");
         }
 
         feedback = GetComponent<TopViewFeedback>();
         gizmoController = GetComponent<TopViewGizmoController>();
 
-        // 验证必要组件
-        if (mapRenderer == null || sceneCollector == null || sceneDataSender == null)
-        {
-            Debug.LogError("Required components missing in TopViewSelectionLogic");
-            enabled = false;  // 禁用这个组件
-        }
-
         // StartCoroutine(InitializeWithDelay());
     }
 
-    public void HandleSceneData(string jsonData)
+    public void HandleSceneData(SceneDataProvider.SceneData sceneData)
     {
-        if (sceneCollector == null || mapRenderer == null)
+        if (mapRenderer == null)
         {
             Debug.LogError("Required components missing when handling scene data");
             return;
         }
 
-        SceneObjectCollector.SceneData sceneData = sceneCollector.ParseSceneData(jsonData);
         if (sceneData == null) 
         {
             Debug.LogError("Failed to parse scene data");
             return;
         }
 
-        // 清除现有的跟踪对象
         ClearTrackedObjects();
         Debug.Log("Cleared tracked objects");
 
-        // 为每个场景对象创建临时GameObject并添加到跟踪列表
         Debug.Log("Creating temp game objects for scene data");
         foreach (var objData in sceneData.objects)
         {
@@ -74,11 +60,11 @@ public class TopViewSelectionLogic : MonoBehaviour
             trackedObjects.Add(tempObj);
             mapRenderer.GenerateMapIcon(tempObj);
         }
-        // 打印跟踪对象的数量
+
         Debug.Log("Tracked objects count: " + trackedObjects.Count);
     }
 
-    private GameObject CreateTempGameObject(SceneObjectCollector.ObjectData objData)
+    private GameObject CreateTempGameObject(SceneDataProvider.ObjectData objData)
     {
         GameObject obj = new GameObject(objData.name);
         obj.transform.position = objData.position;
@@ -100,20 +86,30 @@ public class TopViewSelectionLogic : MonoBehaviour
     }
 
 
-    public void SendObjectPositionUpdate(GameObject obj)
+    public void SendObjectUpdate(GameObject obj)
     {
-        if (sceneDataSender == null || !trackedObjects.Contains(obj)) return;
+        if (!trackedObjects.Contains(obj)) return;
 
-        var objectData = new SceneObjectCollector.ObjectData
+
+        string originalId = objectIdMap.FirstOrDefault(x => x.Value == obj).Key;
+        if (string.IsNullOrEmpty(originalId))
         {
-            id = obj.GetInstanceID().ToString(),
-            name = obj.name,
+            Debug.LogError("Original ID not found for object: " + obj.name);
+            return;
+        }
+
+        var objectUpdate = new ObjectUpdateProvider.ObjectUpdate
+        {
+            id = originalId,
             position = obj.transform.position,
+            rotation = obj.transform.rotation,
             scale = obj.transform.localScale
         };
 
-        string jsonData = JsonUtility.ToJson(objectData);
-        sceneDataSender.SendObjectUpdate(objectData.id, jsonData);
+        objectUpdateProvider.SendObjectUpdate(objectUpdate);
+
+        // string jsonData = JsonUtility.ToJson(objectData);
+        // sceneDataProvider.SendObjectUpdate(objectData.id, jsonData);
     }
 
     private void ClearTrackedObjects()
@@ -169,11 +165,7 @@ public class TopViewSelectionLogic : MonoBehaviour
 
     public void RefreshSceneData()
     {
-        if (sceneDataReceiver != null)
-        {
-            sceneDataReceiver.RequestSceneData();
-            Debug.Log("Requesting scene data refresh...");
-        }
+        Debug.Log("Requesting scene data refresh...");
     }
 
 

@@ -156,7 +156,7 @@ public class TopViewGizmoController : MonoBehaviour
         foreach (var obj in selectedObjects)
         {
             obj.transform.position += worldSpaceMovement;
-            selectionLogic.SendObjectPositionUpdate(obj);
+            selectionLogic.SendObjectUpdate(obj);
         }
 
         UpdateGizmoForSelection(selectedObjects);
