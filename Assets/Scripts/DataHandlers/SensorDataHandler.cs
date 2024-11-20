@@ -24,9 +24,6 @@ public class SensorDataHandler : MonoBehaviour, IDataHandler
         {
             string jsonData = Encoding.UTF8.GetString(data);
             var sensorData = SensorDataProvider.SensorData.FromJson(jsonData);
-
-            Debug.Log($"Device Attitude: {sensorData.deviceAttitude.eulerAngles}");
-
             OnSensorDataReceived.Invoke(sensorData);
         }
         else

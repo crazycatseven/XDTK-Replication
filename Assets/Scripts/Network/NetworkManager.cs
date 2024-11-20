@@ -320,7 +320,6 @@ public class NetworkManager : MonoBehaviour
             data.CopyTo(packet, 4 + typeBytes.Length);
 
             udpClient.Send(packet, packet.Length, remoteEndPoint);
-            Debug.Log($"Sent data - Type: {dataType}, Length: {data.Length}");
         }
         catch (Exception e)
         {

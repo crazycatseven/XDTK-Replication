@@ -42,6 +42,7 @@ public class AROriginManager : MonoBehaviour
 
     public Vector3 ConvertToRelativePosition(Vector3 position)
     {
+        // 获得相对于我们camera relative position的position
         Vector3 cameraRelativePosition = GetCameraRelativePosition();
         return position - cameraRelativePosition;
     }

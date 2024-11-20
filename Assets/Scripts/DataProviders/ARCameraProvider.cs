@@ -7,7 +7,8 @@ public class ARCameraProvider : MonoBehaviour, IDataProvider
     public bool IsEnabled { get; set; } = false;
     public event Action<string, byte[]> OnDataSend;
 
-    public AROriginManager arOriginManager;
+    // public AROriginManager arOriginManager;
+    private Camera mainCamera;
     private Vector3 lastPosition;
     private Quaternion lastRotation;
 
@@ -30,13 +31,18 @@ public class ARCameraProvider : MonoBehaviour, IDataProvider
 
     private void Start()
     {
-        if (arOriginManager == null)
-        {
-            arOriginManager = FindObjectOfType<AROriginManager>();
-        }
+        // if (arOriginManager == null)
+        // {
+        //     arOriginManager = FindObjectOfType<AROriginManager>();
+        // }
 
-        lastPosition = arOriginManager.GetCameraRelativePosition();
-        lastRotation = arOriginManager.GetCameraRelativeRotation();
+        // lastPosition = arOriginManager.GetCameraRelativePosition();
+        // lastRotation = arOriginManager.GetCameraRelativeRotation();
+
+        mainCamera = Camera.main;
+
+        lastPosition = mainCamera.transform.position;
+        lastRotation = mainCamera.transform.rotation;
     }
 
     private void Update()
@@ -50,16 +56,19 @@ public class ARCameraProvider : MonoBehaviour, IDataProvider
 
     private bool HasCameraTransformChanged()
     {
-        return lastPosition != arOriginManager.GetCameraRelativePosition() ||
-               lastRotation != arOriginManager.GetCameraRelativeRotation();
+        // return lastPosition != arOriginManager.GetCameraRelativePosition() ||
+        //        lastRotation != arOriginManager.GetCameraRelativeRotation();
+
+        return lastPosition != mainCamera.transform.position ||
+               lastRotation != mainCamera.transform.rotation;
     }
 
     private void SendCameraData()
     {
         ARCameraData cameraData = new ARCameraData
         {
-            position = arOriginManager.GetCameraRelativePosition(),
-            rotation = arOriginManager.GetCameraRelativeRotation()
+            position = mainCamera.transform.position,
+            rotation = mainCamera.transform.rotation
         };
 
         string jsonData = cameraData.ToJson();
@@ -69,7 +78,7 @@ public class ARCameraProvider : MonoBehaviour, IDataProvider
 
     private void UpdateLastTransform()
     {
-        lastPosition = arOriginManager.GetCameraRelativePosition();
-        lastRotation = arOriginManager.GetCameraRelativeRotation();
+        lastPosition = mainCamera.transform.position;
+        lastRotation = mainCamera.transform.rotation;
     }
 }
