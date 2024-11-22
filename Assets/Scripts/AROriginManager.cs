@@ -8,6 +8,8 @@ public class AROriginManager : MonoBehaviour
     private Vector3 originPositionOffset;
     private Quaternion originRotationOffset;
 
+    public Vector3 cameraToCenterOffset = new Vector3(-0.02f, -0.04f, 0f); // 左2cm，下4cm的偏移
+
     void Start()
     {
     }
@@ -25,24 +27,33 @@ public class AROriginManager : MonoBehaviour
 
         originPositionOffset = -referencePoint.transform.position;
         originRotationOffset = Quaternion.Inverse(referencePoint.transform.rotation);
+
+        Debug.Log($"ResetOrigin: originPositionOffset: {originPositionOffset}, originRotationOffset: {originRotationOffset}");
+    }
+
+    public Vector3 GetDeviceCenterPosition()
+    {
+        Vector3 cameraPosition = Camera.main.transform.position;
+        // 使用当前相机的旋转来转换偏移量，确保无论手机如何旋转，偏移始终正确
+        Vector3 centerPosition = cameraPosition + Camera.main.transform.TransformDirection(cameraToCenterOffset);
+        return centerPosition;
     }
 
     public Vector3 GetCameraRelativePosition()
     {
-        Vector3 currentCameraPosition = Camera.main.transform.position;
+        Vector3 deviceCenterPosition = GetDeviceCenterPosition();
 
         if (!referencePoint)
         {
-            return currentCameraPosition;
+            return deviceCenterPosition;
         }
 
-        Vector3 relativePosition = originRotationOffset * (currentCameraPosition + originPositionOffset);
+        Vector3 relativePosition = originRotationOffset * (deviceCenterPosition + originPositionOffset);
         return relativePosition;
     }
 
     public Vector3 ConvertToRelativePosition(Vector3 position)
     {
-        // 获得相对于我们camera relative position的position
         Vector3 cameraRelativePosition = GetCameraRelativePosition();
         return position - cameraRelativePosition;
     }
