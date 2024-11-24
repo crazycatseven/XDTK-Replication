@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Android_Scene.unity
     guid: 578ac91b527c15b4db698719b7663aee
+  - enabled: 1
+    path: Assets/Scenes/Android_Scene_Web.unity
+    guid: ecc15a2059452a34ba3d537170820b77
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 0bba87c3b3421ce41aff2c572702397f,
       type: 2}

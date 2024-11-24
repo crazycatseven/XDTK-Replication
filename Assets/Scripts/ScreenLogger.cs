@@ -43,7 +43,16 @@ public class ScreenLogger : MonoBehaviour
 
     private void OnGUI()
     {
-        // 在屏幕左上角显示日志
-        GUI.Label(new Rect(10, 10, Screen.width, Screen.height), logText, guiStyle);
+        // 设置自动换行
+        guiStyle.wordWrap = true;
+        
+        // 创建一个固定大小的显示区域，可以根据需要调整
+        float areaWidth = Screen.width * 0.8f;  // 使用屏幕宽度的80%
+        float areaHeight = Screen.height * 0.5f; // 使用屏幕高度的50%
+        
+        // 在屏幕左上角显示日志，使用 ScrollView 使内容可滚动
+        GUILayout.BeginArea(new Rect(10, 10, areaWidth, areaHeight));
+        GUILayout.Label(logText, guiStyle, GUILayout.ExpandWidth(true));
+        GUILayout.EndArea();
     }
 }
