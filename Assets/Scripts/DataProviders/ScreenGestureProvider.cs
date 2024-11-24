@@ -33,7 +33,12 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         public string eventType;    // 事件类型
         public Vector2 touch1Pos;   // 第一个手指位置
         public Vector2 touch2Pos;   // 第二个手指位置
+        public string value;        // 添加value字段
     }
+
+    // 添加一个委托用于获取value
+    public delegate string GetGestureValueDelegate();
+    public GetGestureValueDelegate GetGestureValue { get; set; }
 
     private void Start()
     {
@@ -110,7 +115,8 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         {
             eventType = EventTypes.PinchEnd,
             touch1Pos = Vector2.zero,
-            touch2Pos = Vector2.zero
+            touch2Pos = Vector2.zero,
+            value = GetGestureValue?.Invoke() ?? string.Empty
         };
         
         SendEvent(EventTypes.PinchEnd, pinchData);
@@ -123,7 +129,8 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         {
             eventType = eventType,
             touch1Pos = touch1.position,
-            touch2Pos = touch2.position
+            touch2Pos = touch2.position,
+            value = GetGestureValue?.Invoke() ?? string.Empty
         };
 
         SendEvent(eventType, pinchData);
