@@ -6,6 +6,7 @@ public class ScreenLogger : MonoBehaviour
     private List<string> logs = new List<string>(); // 存储所有日志信息
     private string logText = ""; // 显示在屏幕上的日志内容
     private GUIStyle guiStyle = new GUIStyle(); // GUI 样式
+    private Vector2 scrollPosition;
 
     private void OnEnable()
     {
@@ -34,11 +35,8 @@ public class ScreenLogger : MonoBehaviour
         logs.Add(newLog); // 将日志添加到列表
         logText = string.Join("\n", logs.ToArray()); // 更新屏幕显示的日志内容
 
-        // 限制日志数量，避免屏幕显示过多信息
-        if (logs.Count > 10)
-        {
-            logs.RemoveAt(0); // 移除最早的日志
-        }
+        // 可选:自动滚动到最新日志
+        scrollPosition = new Vector2(0, float.MaxValue);
     }
 
     private void OnGUI()
@@ -46,13 +44,21 @@ public class ScreenLogger : MonoBehaviour
         // 设置自动换行
         guiStyle.wordWrap = true;
         
-        // 创建一个固定大小的显示区域，可以根据需要调整
-        float areaWidth = Screen.width * 0.8f;  // 使用屏幕宽度的80%
-        float areaHeight = Screen.height * 0.5f; // 使用屏幕高度的50%
+        // 创建一个固定大小的显示区域
+        float areaWidth = Screen.width * 0.95f;
+        float areaHeight = Screen.height * 0.3f;
         
-        // 在屏幕左上角显示日志，使用 ScrollView 使内容可滚动
+        // 开始一个滚动视图区域
         GUILayout.BeginArea(new Rect(10, 10, areaWidth, areaHeight));
-        GUILayout.Label(logText, guiStyle, GUILayout.ExpandWidth(true));
+        var scrollViewStyle = new GUIStyle(GUI.skin.scrollView);
+        scrollViewStyle.padding = new RectOffset(10, 10, 10, 10); // 设置滚动条的内边距
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUILayout.Width(areaWidth), GUILayout.Height(areaHeight));
+        
+        // 显示日志内容
+        GUILayout.Label(logText, guiStyle);
+        
+        // 结束滚动视图
+        GUILayout.EndScrollView();
         GUILayout.EndArea();
     }
 }

@@ -34,6 +34,14 @@ public class AndroidCentralManager : MonoBehaviour
 
     }
 
+    public void ConnectFromWeb(string ipAddress, int remotePort)
+    {
+        if (ipInputField != null) ipInputField.text = ipAddress;
+        if (remotePortInputField != null) remotePortInputField.text = remotePort.ToString();
+
+        networkManager.InitializeNetwork(ipAddress, remotePort, localPort);
+    }
+
     private void OnConnectButtonClicked()
     {
         string ipAddress = ipInputField.text;

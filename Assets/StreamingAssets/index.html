@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile App</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <!-- Home Page -->
+    <div id="page1" class="page active">
+        <!-- Network Configuration Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Network Config</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="card-content">
+                <div class="spacer"></div>
+                <div class="input-group">
+                    <label>Remote IP</label>
+                    <input type="text" id="ipInput" value="192.168.50.89" placeholder="Enter IP address">
+                </div>
+                <div class="input-group">
+                    <label>Remote Port</label>
+                    <input type="text" id="portInput" value="9982" placeholder="Enter port">
+                </div>
+                <button class="button" id="networkConnectBtn">Connect</button>
+            </div>
+        </div>
+
+        <!-- CrossHairAlign Card -->
+        <div class="card">
+            <div class="card-content">
+                <button class="button">CrossHairAlign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Library Page -->
+    <div id="page2" class="page">
+        <div class="library-container">
+            <div class="library-wrapper">
+                <div class="library-slide" data-id="coca-cola">
+                    <img src="./images/coca-cola-bottle.png" alt="coca-cola">
+                </div>
+                <div class="library-slide" data-id="donut">
+                    <img src="./images/donut.png" alt="donut">
+                </div>
+                <div class="library-slide" data-id="ice-cream">
+                    <img src="./images/ice-cream.png" alt="ice-cream">
+                </div>
+            </div>
+            <div class="dots-container"></div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-item active" onclick="switchPage(1)">
+            <img class="nav-icon" src="./images/home-active.png" alt="Home Icon">
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchPage(2)">
+            <img class="nav-icon" src="./images/library.png" alt="Library Icon">
+            <span>Library</span>
+        </div>
+    </nav>
+
+    <script src="./script.js"></script>
+    <script src="./gestureDetector.js"></script>
+</body>
+</html>
