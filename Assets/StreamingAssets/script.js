@@ -1,7 +1,13 @@
-// 等待 DOM 完全加载
 document.addEventListener('DOMContentLoaded', () => {
-    // 初始化手势检测器
-    window.gestureDetector = new GestureDetector();
+    // 注册自定义值提供器（针对图片库页面）
+    window._vuplexValueProvider = function() {
+        const slides = document.querySelectorAll('.library-slide');
+        const currentSlide = document.querySelector('.library-slide.active');
+        if (currentSlide) {
+            return currentSlide.dataset.id;
+        }
+        return null;
+    };
 
     // Page switching functionality
     window.switchPage = function(pageNum) {
@@ -44,10 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSlide = index;
         wrapper.style.transform = `translateX(-${index * 100}%)`;
         updateDots();
-        // 更新手势检测器中的选中状态
-        if (window.gestureDetector) {
-            window.gestureDetector.updateSelectedSlide(index);
-        }
+        // 更新当前选中的幻灯片
+        document.querySelectorAll('.library-slide').forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
     }
 
     function updateDots() {

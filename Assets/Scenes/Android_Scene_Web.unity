@@ -672,7 +672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _width: 1080
   _height: 1500
-  _initialUrl: streaming-assets://index.html
+  _initialUrl: https://www.youtube.com
   messageHandler: {fileID: 216534071}
 --- !u!114 &216534071
 MonoBehaviour:
@@ -686,6 +686,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91ad2eb509c7d96469ecbe286093a9fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gestureProvider: {fileID: 0}
+  centralManager: {fileID: 0}
 --- !u!1 &334368258
 GameObject:
   m_ObjectHideFlags: 0
