@@ -133,6 +133,7 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(jsonData);
         OnDataSend?.Invoke(DataType, bytes);
 
+        Debug.Log("SendPinchEvent: " + eventType + " Value: " + value);
 
         switch (eventType)
         {

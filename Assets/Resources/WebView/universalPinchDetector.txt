@@ -3,18 +3,28 @@
         constructor() {
             this.initialPinchDistance = 0;
             this.isPinching = false;
+            this.preventDefaultTouchEvents = false;  // 控制是否阻止默认触摸事件
 
             // 绑定方法
             this.handleTouchStart = this.handleTouchStart.bind(this);
             this.handleTouchMove = this.handleTouchMove.bind(this);
             this.handleTouchEnd = this.handleTouchEnd.bind(this);
 
-            // 添加事件监听
-            document.addEventListener('touchstart', this.handleTouchStart, false);
-            document.addEventListener('touchmove', this.handleTouchMove, false);
-            document.addEventListener('touchend', this.handleTouchEnd, false);
+            // 添加事件监听，使用 passive: false 允许我们阻止默认行为
+            document.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+            document.addEventListener('touchend', this.handleTouchEnd, { passive: false });
 
-            console.log('UniversalGestureDetector initialized');
+            // 阻止缩放
+            document.addEventListener('gesturestart', this.preventDefault);
+            document.addEventListener('gesturechange', this.preventDefault);
+            document.addEventListener('gestureend', this.preventDefault);
+
+            console.log('UniversalGestureDetector initialized with event prevention');
+        }
+
+        preventDefault(e) {
+            e.preventDefault();
         }
 
         getTouchDistance(touch1, touch2) {
@@ -52,18 +62,35 @@
 
         handleTouchStart(event) {
             if (event.touches.length === 2) {
+                // 阻止默认行为和事件冒泡
+                event.preventDefault();
+                event.stopPropagation();
+                
                 this.isPinching = true;
+                this.preventDefaultTouchEvents = true;
                 this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
+                
                 window.vuplex?.postMessage(
                     this.createPinchMessage('PinchStart', [event.touches[0], event.touches[1]])
                 );
+
+                // 添加临时的样式来禁用页面滚动
+                document.body.style.overflow = 'hidden';
+                document.body.style.touchAction = 'none';
             }
         }
 
         handleTouchMove(event) {
+            // 如果正在进行 pinch 操作，阻止所有触摸事件
+            if (this.preventDefaultTouchEvents) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
             if (this.isPinching && event.touches.length === 2) {
                 const currentDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
                 const scale = currentDistance / this.initialPinchDistance;
+                
                 window.vuplex?.postMessage(
                     this.createPinchMessage('PinchUpdate', [event.touches[0], event.touches[1]], scale)
                 );
@@ -72,12 +99,37 @@
 
         handleTouchEnd(event) {
             if (this.isPinching) {
+                // 阻止默认行为和事件冒泡
+                event.preventDefault();
+                event.stopPropagation();
+                
                 this.isPinching = false;
+                this.preventDefaultTouchEvents = false;
+                
                 window.vuplex?.postMessage(
                     this.createPinchMessage('PinchEnd')
                 );
+
+                // 恢复页面滚动
+                document.body.style.overflow = '';
+                document.body.style.touchAction = '';
             }
         }
+
+        // 清理方法
+        destroy() {
+            document.removeEventListener('touchstart', this.handleTouchStart);
+            document.removeEventListener('touchmove', this.handleTouchMove);
+            document.removeEventListener('touchend', this.handleTouchEnd);
+            document.removeEventListener('gesturestart', this.preventDefault);
+            document.removeEventListener('gesturechange', this.preventDefault);
+            document.removeEventListener('gestureend', this.preventDefault);
+        }
+    }
+
+    // 清理旧的实例（如果存在）
+    if (window._vuplexGestureDetector) {
+        window._vuplexGestureDetector.destroy();
     }
 
     window._vuplexGestureDetector = new UniversalGestureDetector();

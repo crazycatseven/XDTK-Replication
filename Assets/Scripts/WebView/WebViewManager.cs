@@ -35,8 +35,8 @@ public class WebViewManager : MonoBehaviour
         var rectTransform = _webViewPrefab.transform as RectTransform;
         rectTransform.sizeDelta = new Vector2(_width, _height);
         rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.anchorMin = new Vector2(0.5f, 0.35f);
-        rectTransform.anchorMax = new Vector2(0.5f, 0.35f);
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
 
         // 等待 WebView 初始化完成
         await _webViewPrefab.WaitUntilInitialized();

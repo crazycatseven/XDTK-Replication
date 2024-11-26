@@ -71,8 +71,7 @@ public class WebViewMessageHandler : MonoBehaviour
 
     public void HandleMessage(string message)
     {
-        Debug.Log("HandleMessage: " + message);
-        
+
         try
         {
             var baseMessage = JsonUtility.FromJson<BaseMessage>(message);
@@ -111,6 +110,8 @@ public class PinchMessageHandler : IMessageHandler
     public void HandleMessage(string message)
     {
         if (!IsGestureProviderReady()) return;
+
+
 
         var pinchMessage = JsonUtility.FromJson<WebViewMessageHandler.PinchMessage>(message);
         var touch1 = CreateTouch(pinchMessage.touch1);

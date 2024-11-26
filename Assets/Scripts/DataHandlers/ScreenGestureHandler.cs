@@ -13,7 +13,7 @@ public class ScreenGestureHandler : MonoBehaviour, IDataHandler
 
     public PinchEvent onPinchStart;
     public PinchEvent onPinchUpdate;
-    public UnityEvent onPinchEnd;
+    public PinchEvent onPinchEnd;
 
     [Serializable]
     private class PinchData
@@ -21,7 +21,7 @@ public class ScreenGestureHandler : MonoBehaviour, IDataHandler
         public string type;         // pinch event type
         public Vector2 touch1;      // first touch point
         public Vector2 touch2;      // second touch point
-        public string value;        // business data
+        public string value;        // business data (e.g. selected item ID)
     }
 
     private static class PinchTypes
@@ -49,7 +49,7 @@ public class ScreenGestureHandler : MonoBehaviour, IDataHandler
                 break;
 
             case PinchTypes.End:
-                onPinchEnd?.Invoke();
+                onPinchEnd?.Invoke(gestureData.touch1, gestureData.touch2, gestureData.value);
                 break;
         }
     }

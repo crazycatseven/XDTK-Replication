@@ -671,8 +671,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _width: 1080
-  _height: 1500
-  _initialUrl: https://www.youtube.com
+  _height: 2340
+  _initialUrl: streaming-assets://index.html
   messageHandler: {fileID: 216534071}
 --- !u!114 &216534071
 MonoBehaviour:
