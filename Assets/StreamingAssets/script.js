@@ -154,4 +154,44 @@ document.addEventListener('DOMContentLoaded', () => {
         // 发送消息到 Unity
         window.vuplex?.postMessage(JSON.stringify(message));
     });
+
+    // 添加预览相关函数
+    window.openPreview = function(element) {
+        const modal = document.querySelector('.preview-modal');
+        const modalImage = modal.querySelector('.modal-image');
+        const modalFilename = modal.querySelector('.modal-filename');
+        const modalFilesize = modal.querySelector('.modal-filesize');
+        
+        const preview = element.querySelector('.file-preview');
+        const filename = element.querySelector('.file-name').textContent;
+        const filesize = element.querySelector('.file-size').textContent;
+        
+        modalImage.src = preview.src;
+        modalFilename.textContent = filename;
+        modalFilesize.textContent = filesize;
+        
+        // 先显示模态框
+        modal.style.display = 'flex';
+        // 强制重排后添加 active 类，触发动画
+        modal.offsetHeight;
+        modal.classList.add('active');
+    }
+
+    window.closePreview = function(event) {
+        const modal = document.querySelector('.preview-modal');
+        // 确保点击的是模态框背景而不是内容
+        if (event.target === modal) {
+            modal.classList.remove('active');
+            // 等待动画完成后隐藏模态框
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    // 添加预览功能事件监听
+    const fileElements = document.querySelectorAll('.message-file');
+    fileElements.forEach(element => {
+        element.addEventListener('click', () => openPreview(element));
+    });
 });

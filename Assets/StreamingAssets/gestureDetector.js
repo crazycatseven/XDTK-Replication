@@ -22,12 +22,29 @@ class GestureDetector {
     }
 
     getSelectedLibraryItem() {
-        const slides = document.querySelectorAll('.library-slide');
-        if (this.currentSlideIndex >= 0 && this.currentSlideIndex < slides.length) {
-            const id = slides[this.currentSlideIndex].dataset.id;
-            console.log('Selected item ID:', id);
-            return id;
+        // 获取当前激活的页面
+        const homePage = document.getElementById('page1');
+        const libraryPage = document.getElementById('page2');
+        const messagePage = document.getElementById('page3');
+
+        // 检查哪个页面是激活状态
+        if (homePage && homePage.classList.contains('active')) {
+            // 主页返回空值
+            return null;
+        } 
+        else if (libraryPage && libraryPage.classList.contains('active')) {
+            // 图片库页面返回当前选中的 slide ID
+            const slides = document.querySelectorAll('.library-slide');
+            if (this.currentSlideIndex >= 0 && this.currentSlideIndex < slides.length) {
+                const id = slides[this.currentSlideIndex].dataset.id;
+                return id;
+            }
         }
+        else if (messagePage && messagePage.classList.contains('active')) {
+            // 消息页面返回固定值
+            return 'teddy-bear';
+        }
+
         return null;
     }
 

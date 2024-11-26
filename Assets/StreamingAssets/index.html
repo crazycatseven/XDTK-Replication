@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile App</title>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./message.css">
 </head>
 <body>
     <!-- Home Page -->
@@ -55,6 +56,54 @@
         </div>
     </div>
 
+    <!-- Message Page -->
+    <div id="page3" class="page">
+        <div class="message-header">
+            <h2 class="header-title">John Smith</h2>
+        </div>
+        
+        <div class="message-container">
+            <div class="message-wrapper">
+                <div class="message-item received">
+                    <img src="./images/avatar.png" class="avatar" alt="avatar">
+                    <div class="message-content">
+                        <div class="message-text">Hi, we have completed the latest version of the toy model, please check it out</div>
+                        <div class="message-time">10:30 AM</div>
+                    </div>
+                </div>
+                <div class="message-item received">
+                    <img src="./images/avatar.png" class="avatar" alt="avatar">
+                    <div class="message-content">
+                        <div class="message-file" onclick="openPreview(this)">
+                            <img src="./images/teddy-bear.png" class="file-preview" alt="preview">
+                            <div class="file-info">
+                                <span class="file-name">teddy-bear.fbx</span>
+                                <span class="file-size">2.5 MB</span>
+                            </div>
+                        </div>
+                        <div class="message-time">10:31 AM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-input-container">
+            <input type="text" class="message-input" placeholder="Type a message...">
+            <button class="send-button">Send</button>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal" onclick="closePreview(event)">
+        <div class="modal-content">
+            <img src="" alt="preview" class="modal-image">
+            <div class="modal-file-info">
+                <span class="modal-filename"></span>
+                <span class="modal-filesize"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation Bar -->
     <nav class="nav-bar">
         <div class="nav-item active" onclick="switchPage(1)">
@@ -64,6 +113,10 @@
         <div class="nav-item" onclick="switchPage(2)">
             <img class="nav-icon" src="./images/library.png" alt="Library Icon">
             <span>Library</span>
+        </div>
+        <div class="nav-item" onclick="switchPage(3)">
+            <img class="nav-icon" src="./images/message.png" alt="Message Icon">
+            <span>Message</span>
         </div>
     </nav>
 
