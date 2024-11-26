@@ -4,6 +4,15 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+[Serializable]
+public class PinchEventData
+{
+    public string type;         // pinch event type
+    public Vector2 touch1;      // first touch point
+    public Vector2 touch2;      // second touch point
+    public string value;        // business data (e.g. selected item ID)
+}
+
 public class ScreenGestureProvider : MonoBehaviour, IDataProvider
 {
 
@@ -14,15 +23,6 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
     #endregion
 
     #region Gesture Data Structure
-
-    [Serializable]
-    private class PinchData
-    {
-        public string type;         // pinch event type
-        public Vector2 touch1;      // first touch point
-        public Vector2 touch2;      // second touch point
-        public string value;        // business data (e.g. selected item ID)
-    }
 
     private static class PinchTypes
     {
@@ -121,7 +121,7 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
 
     public void SendPinchEvent(string eventType, Touch touch1, Touch touch2, string value = "")
     {
-        var pinchData = new PinchData
+        var pinchData = new PinchEventData
         {
             type = eventType,
             touch1 = touch1.position,
