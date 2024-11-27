@@ -15,7 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
         
         document.getElementById('page' + pageNum).classList.add('active');
-        document.querySelectorAll('.nav-item')[pageNum - 1].classList.add('active');
+        
+        // 处理导航栏显示/隐藏
+        const navbar = document.querySelector('.nav-bar');
+        if (pageNum === 3) { // 消息页面
+            navbar.style.display = 'none';
+        } else {
+            navbar.style.display = 'flex';
+            document.querySelectorAll('.nav-item')[pageNum - 1].classList.add('active');
+        }
     }
 
     // Card collapse functionality
@@ -179,8 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closePreview = function(event) {
         const modal = document.querySelector('.preview-modal');
-        // 确保点击的是模态框背景而不是内容
-        if (event.target === modal) {
+        const modalContent = modal.querySelector('.modal-content');
+
+        if (event.target === modal && !modalContent.contains(event.target)) {
             modal.classList.remove('active');
             // 等待动画完成后隐藏模态框
             setTimeout(() => {
