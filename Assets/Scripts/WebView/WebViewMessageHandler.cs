@@ -23,6 +23,7 @@ public class WebViewMessageHandler : MonoBehaviour
     {
         public Vector2 touch1;
         public Vector2 touch2;
+        public float scale;
     }
 
     [Serializable]
@@ -40,6 +41,7 @@ public class WebViewMessageHandler : MonoBehaviour
         public const string PinchUpdate = "PinchUpdate";
         public const string PinchEnd = "PinchEnd";
         public const string Connect = "Connect";
+        public const string GoBack = "GoBack";
     }
     #endregion
 
@@ -65,7 +67,8 @@ public class WebViewMessageHandler : MonoBehaviour
             { MessageTypes.PinchStart, new PinchMessageHandler(gestureProvider) },
             { MessageTypes.PinchUpdate, new PinchMessageHandler(gestureProvider) },
             { MessageTypes.PinchEnd, new PinchMessageHandler(gestureProvider) },
-            { MessageTypes.Connect, new NetworkMessageHandler(centralManager) }
+            { MessageTypes.Connect, new NetworkMessageHandler(centralManager) },
+            { MessageTypes.GoBack, new GoBackMessageHandler() }
         };
     }
 
@@ -111,10 +114,7 @@ public class PinchMessageHandler : IMessageHandler
     {
         if (!IsGestureProviderReady()) return;
 
-
-
         var pinchMessage = JsonUtility.FromJson<WebViewMessageHandler.PinchMessage>(message);
-    
         var touch1 = CreateTouch(pinchMessage.touch1);
         var touch2 = CreateTouch(pinchMessage.touch2);
 
@@ -128,6 +128,7 @@ public class PinchMessageHandler : IMessageHandler
                 break;
             case WebViewMessageHandler.MessageTypes.PinchEnd:
                 gestureProvider.HandlePinchEnd(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
+                UnityEngine.Object.FindObjectOfType<WebViewManager>()?.LoadSuccessPage();
                 break;
         }
     }
@@ -162,6 +163,15 @@ public class NetworkMessageHandler : IMessageHandler
 
         var networkMessage = JsonUtility.FromJson<WebViewMessageHandler.NetworkMessage>(message);
         centralManager.ConnectFromWeb(networkMessage.ip, networkMessage.port);
+    }
+}
+
+public class GoBackMessageHandler : IMessageHandler
+{
+    public void HandleMessage(string message)
+    {
+        var webViewManager = UnityEngine.Object.FindObjectOfType<WebViewManager>();
+        webViewManager?.GoBack();
     }
 }
 #endregion

@@ -4,6 +4,7 @@
             this.initialPinchDistance = 0;
             this.isPinching = false;
             this.preventDefaultTouchEvents = false;  // 控制是否阻止默认触摸事件
+            this.currentScale = 1.0;  // 添加新属性来跟踪当前缩放值
 
             // 绑定方法
             this.handleTouchStart = this.handleTouchStart.bind(this);
@@ -70,8 +71,9 @@
                 this.preventDefaultTouchEvents = true;
                 this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
                 
+                this.currentScale = 1.0;
                 window.vuplex?.postMessage(
-                    this.createPinchMessage('PinchStart', [event.touches[0], event.touches[1]])
+                    this.createPinchMessage('PinchStart', [event.touches[0], event.touches[1]], this.currentScale)
                 );
 
                 // 添加临时的样式来禁用页面滚动
@@ -81,7 +83,6 @@
         }
 
         handleTouchMove(event) {
-            // 如果正在进行 pinch 操作，阻止所有触摸事件
             if (this.preventDefaultTouchEvents) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -89,17 +90,16 @@
 
             if (this.isPinching && event.touches.length === 2) {
                 const currentDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
-                const scale = currentDistance / this.initialPinchDistance;
+                this.currentScale = currentDistance / this.initialPinchDistance;  // 保存当前缩放值
                 
                 window.vuplex?.postMessage(
-                    this.createPinchMessage('PinchUpdate', [event.touches[0], event.touches[1]], scale)
+                    this.createPinchMessage('PinchUpdate', [event.touches[0], event.touches[1]], this.currentScale)
                 );
             }
         }
 
         handleTouchEnd(event) {
             if (this.isPinching) {
-                // 阻止默认行为和事件冒泡
                 event.preventDefault();
                 event.stopPropagation();
                 
@@ -107,7 +107,7 @@
                 this.preventDefaultTouchEvents = false;
                 
                 window.vuplex?.postMessage(
-                    this.createPinchMessage('PinchEnd')
+                    this.createPinchMessage('PinchEnd', null, this.currentScale)  // 使用最后的缩放值
                 );
 
                 // 恢复页面滚动

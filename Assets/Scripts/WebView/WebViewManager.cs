@@ -72,6 +72,11 @@ public class WebViewManager : MonoBehaviour
         return true;
     }
 
+    public void LoadSuccessPage()
+    {
+        _webViewPrefab.WebView.LoadUrl(System.IO.Path.Combine(Application.streamingAssetsPath, "payment_success.html"));
+    }
+
     private void SendMessageToJavaScript()
     {
         string message = "{\"type\": \"greeting\", \"message\": \"Hello from C#!\"}";
@@ -82,5 +87,13 @@ public class WebViewManager : MonoBehaviour
     private void OnDestroy()
     {
         _webViewPrefab?.Destroy();
+    }
+
+    public async void GoBack()
+    {
+        if (_webViewPrefab?.WebView != null && await _webViewPrefab.WebView.CanGoBack())
+        {
+            _webViewPrefab.WebView.GoBack();
+        }
     }
 }
