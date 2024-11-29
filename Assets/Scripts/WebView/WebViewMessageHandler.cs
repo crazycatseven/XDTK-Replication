@@ -114,19 +114,20 @@ public class PinchMessageHandler : IMessageHandler
 
 
         var pinchMessage = JsonUtility.FromJson<WebViewMessageHandler.PinchMessage>(message);
+    
         var touch1 = CreateTouch(pinchMessage.touch1);
         var touch2 = CreateTouch(pinchMessage.touch2);
 
         switch (pinchMessage.type)
         {
             case WebViewMessageHandler.MessageTypes.PinchStart:
-                gestureProvider.HandlePinchStart(touch1, touch2, pinchMessage.value);
+                gestureProvider.HandlePinchStart(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
                 break;
             case WebViewMessageHandler.MessageTypes.PinchUpdate:
-                gestureProvider.HandlePinchUpdate(touch1, touch2, pinchMessage.value);
+                gestureProvider.HandlePinchUpdate(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
                 break;
             case WebViewMessageHandler.MessageTypes.PinchEnd:
-                gestureProvider.HandlePinchEnd(touch1, touch2, pinchMessage.value);
+                gestureProvider.HandlePinchEnd(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
                 break;
         }
     }
