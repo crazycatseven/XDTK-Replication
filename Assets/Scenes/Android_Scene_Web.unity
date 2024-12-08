@@ -4967,7 +4967,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ff020ca2c29844ebec4485397316ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gestureProvider: {fileID: 2094185019}
 --- !u!1 &2112119617
 GameObject:
   m_ObjectHideFlags: 0

@@ -74,7 +74,8 @@ public class WebViewManager : MonoBehaviour
 
     public void LoadSuccessPage()
     {
-        _webViewPrefab.WebView.LoadUrl(System.IO.Path.Combine(Application.streamingAssetsPath, "payment_success.html"));
+        Debug.Log("Try to load success page");
+        // _webViewPrefab.WebView.LoadUrl(System.IO.Path.Combine(Application.streamingAssetsPath, "payment_success.html"));
     }
 
     private void SendMessageToJavaScript()

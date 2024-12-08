@@ -46,7 +46,7 @@ public class ScreenLogger : MonoBehaviour
         
         // 创建一个固定大小的显示区域
         float areaWidth = Screen.width * 0.95f;
-        float areaHeight = Screen.height * 0.3f;
+        float areaHeight = Screen.height * 0.2f;
         
         // 开始一个滚动视图区域
         GUILayout.BeginArea(new Rect(10, 10, areaWidth, areaHeight));

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./video.css">
+</head>
+<body>
+    <div class="page active">
+        <div class="video-header">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <img src="./images/left.png" alt="Back">
+            </button>
+            <h2 class="header-title">Quest 3 Video</h2>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video id="mainVideo" class="video-player">
+                    <source src="videos/Quest3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-controls">
+                    <div class="progress-bar">
+                        <div class="progress-filled"></div>
+                    </div>
+                    <div class="controls-buttons">
+                        <button class="play-button">
+                            <img src="./images/play.png" alt="Play" class="play-icon">
+                            <img src="./images/pause.png" alt="Pause" class="pause-icon" style="display: none;">
+                        </button>
+                        <div class="time-display">
+                            <span class="current-time">0:00</span>
+                            <span>/</span>
+                            <span class="total-time">0:00</span>
+                        </div>
+                        <button class="fullscreen-button">
+                            <img src="./images/fullscreen.png" alt="Fullscreen">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./video.js"></script>
+</body>
+</html>

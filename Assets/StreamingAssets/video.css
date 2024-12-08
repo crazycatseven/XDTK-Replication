@@ -1,0 +1,122 @@
+.video-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--background-color);
+}
+
+.video-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--card-background);
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;
+    text-align: center;
+    margin-right: 40px;
+}
+
+.back-button {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 16px;
+}
+
+.back-button img {
+    width: 100%;
+    height: 100%;
+    filter: invert(1);
+}
+
+.video-container {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    overflow: hidden;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.video-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    object-fit: contain;
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    padding: 16px;
+    transition: opacity 0.3s ease;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    border-radius: 2px;
+    margin-bottom: 8px;
+}
+
+.progress-filled {
+    width: 0;
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.controls-buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.play-button, .fullscreen-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.play-button img, .fullscreen-button img {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+.time-display {
+    color: white;
+    font-size: 14px;
+    flex: 1;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Controller</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./controller.css">
+</head>
+<body>
+    <div class="page active">
+        <div class="controller-header">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <img src="./images/left.png" alt="Back">
+            </button>
+            <h2 class="header-title">Controller</h2>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="controller-container">
+            <div class="gesture-area">
+                <div class="gesture-hint">Touch Area</div>
+                <div class="gesture-feedback"></div>
+            </div>
+
+            <div class="gesture-info">
+                <div class="info-item">
+                    <div class="info-label">Gesture:</div>
+                    <div class="info-value" id="gestureType">None</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Distance:</div>
+                    <div class="info-value" id="gestureDistance">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Scale:</div>
+                    <div class="info-value" id="gestureScale">1.0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Direction:</div>
+                    <div class="info-value" id="gestureDirection">None</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="controller.js"></script>
+</body>
+</html>

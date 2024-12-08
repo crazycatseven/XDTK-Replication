@@ -40,7 +40,7 @@ public class WebViewMessageHandler : MonoBehaviour
         public const string PinchStart = "PinchStart";
         public const string PinchUpdate = "PinchUpdate";
         public const string PinchEnd = "PinchEnd";
-        public const string Connect = "Connect";
+        public const string Connect = "NetworkConnect";
         public const string GoBack = "GoBack";
     }
     #endregion
@@ -90,7 +90,7 @@ public class WebViewMessageHandler : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error processing web message: {e.Message}");
+            Debug.LogError($"Error processing message: {message}");
         }
     }
 }
@@ -117,17 +117,24 @@ public class PinchMessageHandler : IMessageHandler
         var pinchMessage = JsonUtility.FromJson<WebViewMessageHandler.PinchMessage>(message);
         var touch1 = CreateTouch(pinchMessage.touch1);
         var touch2 = CreateTouch(pinchMessage.touch2);
+        
+        var value = pinchMessage.value;
+
+        if (value == "")
+        {
+            value = pinchMessage.url;
+        }
 
         switch (pinchMessage.type)
         {
             case WebViewMessageHandler.MessageTypes.PinchStart:
-                gestureProvider.HandlePinchStart(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
+                gestureProvider.HandlePinchStart(touch1, touch2, value);
                 break;
             case WebViewMessageHandler.MessageTypes.PinchUpdate:
-                gestureProvider.HandlePinchUpdate(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
+                gestureProvider.HandlePinchUpdate(touch1, touch2, value);
                 break;
             case WebViewMessageHandler.MessageTypes.PinchEnd:
-                gestureProvider.HandlePinchEnd(touch1, touch2, pinchMessage.value?? pinchMessage.url ?? "");
+                gestureProvider.HandlePinchEnd(touch1, touch2, value);
                 UnityEngine.Object.FindObjectOfType<WebViewManager>()?.LoadSuccessPage();
                 break;
         }

@@ -115,6 +115,7 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         isPinching = false;
 
         EnableUIInteraction();
+        Debug.Log($"Pinch ended - Value: {value}");
         SendPinchEvent(PinchTypes.End, touch1, touch2, value);
     }
 
@@ -132,8 +133,6 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
         string jsonData = JsonUtility.ToJson(pinchData);
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(jsonData);
         OnDataSend?.Invoke(DataType, bytes);
-
-        Debug.Log("SendPinchEvent: " + eventType + " Value: " + value);
 
         switch (eventType)
         {

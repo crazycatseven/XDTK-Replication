@@ -1,10 +1,12 @@
 (function () {
     class UniversalGestureDetector {
         constructor() {
+            this.pinchValueProvider = null;
             this.initialPinchDistance = 0;
             this.isPinching = false;
             this.preventDefaultTouchEvents = false;  // 控制是否阻止默认触摸事件
             this.currentScale = 1.0;  // 添加新属性来跟踪当前缩放值
+            this.lastTouches = null;  // 添加新属性来存储最后的触摸点
 
             // 绑定方法
             this.handleTouchStart = this.handleTouchStart.bind(this);
@@ -22,6 +24,21 @@
             document.addEventListener('gestureend', this.preventDefault);
 
             console.log('UniversalGestureDetector initialized with event prevention');
+
+            // 尝试自动查找页面中的getValue函数
+            this.autoDetectValueProvider();
+        }
+
+        autoDetectValueProvider() {
+            // 查找页面级的getValue函数
+            if (window.getValue) {
+                this.pinchValueProvider = window.getValue;
+                console.log('Found global getValue function');
+                return;
+            }
+
+            // 如果没找到，设置一个定时器继续尝试
+            setTimeout(() => this.autoDetectValueProvider(), 100);
         }
 
         preventDefault(e) {
@@ -35,19 +52,15 @@
         }
 
         getCustomValue() {
-            return window._vuplexValueProvider?.();
+            return this.pinchValueProvider?.() || "";
         }
 
         createPinchMessage(type, touches = null, scale = null) {
             const message = {
                 type: type,
-                url: window.location.href
+                url: window.location.href,
+                value: this.getCustomValue()
             };
-
-            const customValue = this.getCustomValue();
-            if (customValue !== undefined && customValue !== null) {
-                message.value = customValue;
-            }
 
             if (touches) {
                 message.touch1 = { x: touches[0].clientX, y: touches[0].clientY };
@@ -90,7 +103,12 @@
 
             if (this.isPinching && event.touches.length === 2) {
                 const currentDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
-                this.currentScale = currentDistance / this.initialPinchDistance;  // 保存当前缩放值
+                this.currentScale = currentDistance / this.initialPinchDistance;
+                // 存储最后的触摸点
+                this.lastTouches = [
+                    { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY },
+                    { clientX: event.touches[1].clientX, clientY: event.touches[1].clientY }
+                ];
                 
                 window.vuplex?.postMessage(
                     this.createPinchMessage('PinchUpdate', [event.touches[0], event.touches[1]], this.currentScale)
@@ -105,14 +123,16 @@
                 
                 this.isPinching = false;
                 this.preventDefaultTouchEvents = false;
-                
+
+                // 使用存储的最后触摸点
                 window.vuplex?.postMessage(
-                    this.createPinchMessage('PinchEnd', null, this.currentScale)  // 使用最后的缩放值
+                    this.createPinchMessage('PinchEnd', this.lastTouches, this.currentScale)
                 );
 
                 // 恢复页面滚动
                 document.body.style.overflow = '';
                 document.body.style.touchAction = '';
+                this.lastTouches = null;  // 清理存储的触摸点
             }
         }
 
@@ -132,5 +152,8 @@
         window._vuplexGestureDetector.destroy();
     }
 
-    window._vuplexGestureDetector = new UniversalGestureDetector();
+    // 创建新实例并暴露给全局
+    const detector = new UniversalGestureDetector();
+    window._vuplexGestureDetector = detector;
+    window.gestureDetector = detector;
 })();
