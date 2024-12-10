@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>支付成功</title>
+    <title>Payment Success</title>
     <style>
         body {
             margin: 0;
@@ -129,20 +129,20 @@
 </head>
 <body>
     <div class="success-container">
-        <img src="./images/successful_payment.png" alt="支付成功" class="success-icon">
-        <div class="success-text">支付成功</div>
+        <img src="./images/successful_payment.png" alt="Payment Success" class="success-icon">
+        <div class="success-text">Payment Success</div>
         <div class="amount">
             <div class="amount-wrapper">
                 <span class="currency">¥</span>0.00
             </div>
         </div>
         <div class="button-container">
-            <button class="complete-button" id="backButton">完成</button>
+            <button class="complete-button" id="backButton">Complete</button>
         </div>
     </div>
     <script>
         document.getElementById('backButton').addEventListener('click', function() {
-            // 发送返回消息给Unity
+            // Send back message to Unity
             window.vuplex?.postMessage(JSON.stringify({
                 type: 'GoBack',
                 url: window.location.href

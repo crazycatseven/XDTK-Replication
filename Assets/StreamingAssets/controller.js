@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let initialDistance = 0;
     let isGesturing = false;
 
-    // 防止默认的触摸行为
+    // Prevent default touch behavior
     gestureArea.addEventListener('touchstart', (e) => {
         e.preventDefault();
         initialTouches = [...e.touches];
@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
         currentTouches = [...e.touches];
 
         if (e.touches.length === 2) {
-            // 双指手势
+            // Two finger gesture
             const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
             const scale = currentDistance / initialDistance;
             
-            // 计算移动方向
+            // Calculate movement direction
             const initialCenter = getTouchCenter(initialTouches[0], initialTouches[1]);
             const currentCenter = getTouchCenter(e.touches[0], e.touches[1]);
             const direction = getDirection(initialCenter, currentCenter);
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gestureDistance.textContent = Math.round(currentDistance) + 'px';
             gestureDirection.textContent = direction;
 
-            // 发送消息到Unity
+            // Send message to Unity
             const message = {
                 type: 'two_finger_gesture',
                 scale: scale,
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             window.vuplex.postMessage(JSON.stringify(message));
         } else if (e.touches.length === 1) {
-            // 单指滑动
+            // Single finger swipe
             const touch = e.touches[0];
             const initialTouch = initialTouches[0];
             const direction = getDirection(initialTouch, touch);
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gestureDistance.textContent = Math.round(distance) + 'px';
             gestureDirection.textContent = direction;
 
-            // 发送消息到Unity
+            // Send message to Unity
             const message = {
                 type: 'one_finger_gesture',
                 direction: direction,
@@ -106,14 +106,14 @@ document.addEventListener('DOMContentLoaded', function() {
         gestureDirection.textContent = 'None';
     }
 
-    // 计算两点之间的距离
+    // Calculate distance between two points
     function getTouchDistance(touch1, touch2) {
         const dx = touch1.clientX - touch2.clientX;
         const dy = touch1.clientY - touch2.clientY;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    // 计算两点的中心点
+    // Calculate the center point of two points
     function getTouchCenter(touch1, touch2) {
         return {
             x: (touch1.clientX + touch2.clientX) / 2,
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // 获取移动方向
+    // Get movement direction
     function getDirection(start, end) {
         const dx = end.clientX - start.clientX;
         const dy = end.clientY - start.clientY;

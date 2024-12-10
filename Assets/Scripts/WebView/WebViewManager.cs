@@ -26,34 +26,34 @@ public class WebViewManager : MonoBehaviour
             Debug.LogError("WebViewMessageHandler 未找到");
         }
 
-        // 实例化 CanvasWebViewPrefab
+        // Instantiate CanvasWebViewPrefab
         _webViewPrefab = CanvasWebViewPrefab.Instantiate();
         _webViewPrefab.transform.SetParent(transform, false);
         _webViewPrefab.Native2DModeEnabled = true;
        
-        // 设置大小和位置
+        // Set size and position
         var rectTransform = _webViewPrefab.transform as RectTransform;
         rectTransform.sizeDelta = new Vector2(_width, _height);
         rectTransform.anchoredPosition = Vector2.zero;
         rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
 
-        // 等待 WebView 初始化完成
+        // Wait for WebView to initialize
         await _webViewPrefab.WaitUntilInitialized();
 
-        // 注入通用手势检测脚本
+        // Inject universal gesture detection script
         if (LoadPinchDetectorScript(out string script))
         {
             _webViewPrefab.WebView.PageLoadScripts.Add(script);
         }
 
-        // 设置消息处理
+        // Set message handling
         _webViewPrefab.WebView.MessageEmitted += (sender, args) =>
         {
             messageHandler.HandleMessage(args.Value);
         };
 
-        // 加载初始 URL
+        // Load initial URL
         _webViewPrefab.WebView.LoadUrl(_initialUrl);
     }
 
@@ -82,7 +82,7 @@ public class WebViewManager : MonoBehaviour
     {
         string message = "{\"type\": \"greeting\", \"message\": \"Hello from C#!\"}";
         _webViewPrefab.WebView.PostMessage(message);
-        Debug.Log("C# 已发送消息: " + message);
+        Debug.Log("C# sent message: " + message);
     }
 
     private void OnDestroy()

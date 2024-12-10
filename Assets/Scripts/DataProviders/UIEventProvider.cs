@@ -7,16 +7,16 @@ public class UIEventProvider : MonoBehaviour, IDataProvider
     public bool IsEnabled { get; set; } = false;
     public event Action<string, byte[]> OnDataSend;
 
-    // 定义所有支持的UI事件类型
+    // Define all supported UI event types
     public static class EventTypes
     {
-        // 基础UI事件
+        // Basic UI events
         public const string ButtonClick = "ButtonClick";
         public const string SliderChange = "SliderChange";
         public const string ToggleChange = "ToggleChange";
         public const string InputFieldChange = "InputFieldChange";
         
-        // 超级按钮事件
+        // Super button events
         public const string SuperButtonClick = "SuperButtonClick";
         public const string SuperButtonHold = "SuperButtonHold";
         public const string SuperButtonDrag = "SuperButtonDrag";
@@ -27,18 +27,17 @@ public class UIEventProvider : MonoBehaviour, IDataProvider
     public class UIEventData
     {
         [SerializeField]
-        private string eventType;    // 改为private，通过方法设置
+        private string eventType;    // Changed to private, set through method
         [SerializeField]
-        private string elementId;    // 改为private，通过方法设置
+        private string elementId;    // Changed to private, set through method
         [SerializeField]
-        private string value;        // 改为private，通过方法设置
+        private string value;        // Changed to private, set through method
 
-        // 提供公共属性来访问
+
         public string EventType => eventType;
         public string ElementId => elementId;
         public string Value => value;
 
-        // 构造函数
         public UIEventData(string eventType, string elementId, string value = "")
         {
             ValidateEventType(eventType);
@@ -49,7 +48,7 @@ public class UIEventProvider : MonoBehaviour, IDataProvider
 
         private void ValidateEventType(string eventType)
         {
-            // 验证事件类型是否合法
+            // Check if the event type is valid
             var field = typeof(EventTypes).GetField(eventType);
             if (field == null)
             {

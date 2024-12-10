@@ -26,7 +26,7 @@ public class TopViewGizmoController : MonoBehaviour
         
         if (gizmoPrefab == null)
         {
-            Debug.LogError("Gizmo Prefab 未在 Inspector 中赋值!");
+            Debug.LogError("Gizmo Prefab is not assigned in the Inspector!");
             return;
         }
         InitializeGizmo();
@@ -58,7 +58,7 @@ public class TopViewGizmoController : MonoBehaviour
             return;
         }
 
-        // 计算选中物体的中心点（在世界空间中）
+        // Calculate the center of the selected objects (in world space)
         Vector3 worldCenter = Vector3.zero;
         foreach (var obj in objects)
         {
@@ -66,7 +66,7 @@ public class TopViewGizmoController : MonoBehaviour
         }
         worldCenter /= objects.Count;
 
-        // 将世界空间坐标转换为地图上的UI坐标
+        // Convert world space coordinates to UI coordinates on the map
         Vector2 mapPosition = mapRenderer.WorldToMapPosition(worldCenter);
         gizmo.anchoredPosition = mapPosition;
 
@@ -77,7 +77,7 @@ public class TopViewGizmoController : MonoBehaviour
     {
         if (!gizmo.gameObject.activeSelf) return false;
 
-        // 先检查坐标轴
+        // First check the axes
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             mapRenderer.TopViewSelectionPanel,
             screenPosition,
@@ -110,7 +110,7 @@ public class TopViewGizmoController : MonoBehaviour
             return true;
         }
 
-        // 最后再检查物体图标
+        // Finally check the object icons
         foreach (var obj in selectedObjects)
         {
             if (mapRenderer.GetRenderedIcons().TryGetValue(obj, out GameObject icon))

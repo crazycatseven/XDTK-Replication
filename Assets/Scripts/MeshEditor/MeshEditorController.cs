@@ -44,7 +44,7 @@ public class MeshEditorController : MonoBehaviour
     private GameObject moveGizmo;
     private LineRenderer xAxis, yAxis, zAxis;
 
-    private Vector3 rotationCenter; // 旋转中心
+    private Vector3 rotationCenter; // Rotation center
     private bool isDragging = false;
     private Vector3 previousMousePosition;
 
@@ -135,64 +135,63 @@ public class MeshEditorController : MonoBehaviour
                     Debug.Log("Z axis selected");
                 }
 
-                // 如果点击到某个轴，记录拖拽初始位置并返回 true
+                // If an axis is clicked, record the drag start position and return true
                 if (selectedAxis != null)
                 {
                     dragStartPosition = transform.position;
                     previousMousePosition = Input.mousePosition;
-                    return true; // 表示点击了某个轴
+                    return true; // Indicates an axis was clicked
                 }
             }
         }
 
-        // 执行拖拽
+        // Execute dragging
         if (Input.GetMouseButton(0) && selectedAxis != null)
         {
-            // 计算屏幕空间中的鼠标增量
+            // Calculate mouse delta in screen space
             Vector3 mouseDelta = Input.mousePosition - previousMousePosition;
             Vector3 movement = Vector3.zero;
 
-            // 根据所选轴设置移动方向
+            // Set movement direction based on the selected axis
             switch (selectedAxis)
             {
                 case "X":
-                    movement = transform.right * mouseDelta.x * 0.01f; // 仅沿 X 轴方向
+                    movement = transform.right * mouseDelta.x * 0.01f; // Move only along the X axis
                     break;
                 case "Y":
-                    movement = transform.up * mouseDelta.y * 0.01f; // 仅沿 Y 轴方向
+                    movement = transform.up * mouseDelta.y * 0.01f; // Move only along the Y axis
                     break;
                 case "Z":
-                    movement = transform.forward * mouseDelta.x * 0.01f; // 仅沿 Z 轴方向
+                    movement = transform.forward * mouseDelta.x * 0.01f; // Move only along the Z axis
                     break;
             }
 
-            // 更新位置
+            // Update position
             transform.position = dragStartPosition + movement;
 
             UpdateGizmoPosition();
 
-            // 更新拖拽起点，避免位置叠加错误
+            // Update drag start position to avoid cumulative errors
             dragStartPosition = transform.position;
             previousMousePosition = Input.mousePosition;
         }
 
-        // 释放鼠标按钮时清除拖拽状态
+        // Clear drag state when the mouse button is released
         if (Input.GetMouseButtonUp(0))
         {
             selectedAxis = null;
         }
 
-        return false; // 未点击轴时返回 false
+        return false; // Return false if no axis was clicked
     }
 
     private void HandleObjectSelection()
     {
         if (Input.GetMouseButtonDown(0))
         {
-
             if (HandleAxisDrag())
             {
-                // 如果点击到坐标轴，则不改变选择状态
+                // If an axis is clicked, do not change selection state
                 return;
             }
 
@@ -200,12 +199,12 @@ public class MeshEditorController : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
             {
                 isSelected = true;
-                rotationCenter = transform.position; // 将旋转中心设置为选中物体的位置
+                rotationCenter = transform.position; // Set rotation center to the selected object's position
             }
             else
             {
                 isSelected = false;
-                rotationCenter = Vector3.zero; // 没有选中物体时，将旋转中心设置为世界中心
+                rotationCenter = Vector3.zero; // Set rotation center to world center when no object is selected
             }
             UpdateSelectionVisual();
         }
@@ -215,11 +214,11 @@ public class MeshEditorController : MonoBehaviour
     {
         if (isSelected)
         {
-            selectedObjectRenderer.material.color = Color.yellow;
+            selectedObjectRenderer.material.color = Color.yellow; // Change color to yellow when selected
         }
         else
         {
-            selectedObjectRenderer.material.color = originalColor;
+            selectedObjectRenderer.material.color = originalColor; // Revert to original color when not selected
         }
     }
 
@@ -264,12 +263,12 @@ public class MeshEditorController : MonoBehaviour
         BoxCollider collider = lineRenderer.gameObject.AddComponent<BoxCollider>();
 
         collider.size = new Vector3(
-            Mathf.Abs(direction.x) > 0 ? 1.0f : 0.1f,  // 如果是 X 轴，沿 X 方向设置长度
-            Mathf.Abs(direction.y) > 0 ? 1.0f : 0.1f,  // 如果是 Y 轴，沿 Y 方向设置长度
-            Mathf.Abs(direction.z) > 0 ? 1.0f : 0.1f   // 如果是 Z 轴，沿 Z 方向设置长度
+            Mathf.Abs(direction.x) > 0 ? 1.0f : 0.1f,  // If X axis, set length along X direction
+            Mathf.Abs(direction.y) > 0 ? 1.0f : 0.1f,  // If Y axis, set length along Y direction
+            Mathf.Abs(direction.z) > 0 ? 1.0f : 0.1f   // If Z axis, set length along Z direction
         );
 
-        collider.center = direction * 0.5f; // 将碰撞器中心沿轴方向放置
+        collider.center = direction * 0.5f; // Place the collider center along the axis direction
     }
 
     private void UpdateGizmoPosition()
@@ -290,30 +289,30 @@ public class MeshEditorController : MonoBehaviour
 
     private void HandleCameraRotation()
     {
-        if (Input.GetMouseButtonDown(0)) // 鼠标左键按下开始拖拽
+        if (Input.GetMouseButtonDown(0)) // Left mouse button pressed to start dragging
         {
             isDragging = true;
             previousMousePosition = Input.mousePosition;
         }
-        else if (Input.GetMouseButtonUp(0)) // 鼠标左键释放停止拖拽
+        else if (Input.GetMouseButtonUp(0)) // Left mouse button released to stop dragging
         {
             isDragging = false;
         }
 
-        if (isDragging && !isSelected) // 仅在没有选中物体时旋转视角
+        if (isDragging && !isSelected) // Rotate the view only when no object is selected
         {
             Vector3 delta = Input.mousePosition - previousMousePosition;
             previousMousePosition = Input.mousePosition;
 
-            // 计算旋转角度
+            // Calculate rotation angles
             float horizontalRotation = delta.x * 0.2f;
             float verticalRotation = -delta.y * 0.2f;
 
-            // 绕旋转中心点旋转摄像机
+            // Rotate the camera around the rotation center
             Camera.main.transform.RotateAround(rotationCenter, Vector3.up, horizontalRotation);
             Camera.main.transform.RotateAround(rotationCenter, Camera.main.transform.right, verticalRotation);
 
-            // 保持摄像机朝向旋转中心
+            // Keep the camera looking at the rotation center
             Camera.main.transform.LookAt(rotationCenter);
         }
     }

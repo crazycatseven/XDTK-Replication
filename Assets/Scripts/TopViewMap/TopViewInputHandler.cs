@@ -39,7 +39,7 @@ public class TopViewInputHandler : MonoBehaviour
 
         if (selectionLogic.IsEnabled())
         {
-            // 检测是触摸输入还是鼠标输入
+            // Detect touch or mouse input
             if (Input.touchCount > 0)
             {
                 HandleTouchInput();
@@ -53,7 +53,7 @@ public class TopViewInputHandler : MonoBehaviour
 
     void HandleTouchInput()
     {
-        // 单指操作 - 对应鼠标左键
+        // Single finger operation - corresponds to mouse left button
         if (Input.touchCount == 1)
         {
             Touch touch = Input.GetTouch(0);
@@ -97,7 +97,7 @@ public class TopViewInputHandler : MonoBehaviour
                     break;
             }
         }
-        // 双指操作 - 对应鼠标右键
+        // Two finger operation - corresponds to mouse right button
         else if (Input.touchCount == 2)
         {
             Touch touch1 = Input.GetTouch(0);
@@ -122,7 +122,7 @@ public class TopViewInputHandler : MonoBehaviour
         HandleSelectionInput();
     }
 
-    // 将原来的Update中的鼠标输入逻辑移到这个方法中
+    // Move the original mouse input logic from Update to this method
     void HandleSelectionInput()
     {
         // Mouse left button down

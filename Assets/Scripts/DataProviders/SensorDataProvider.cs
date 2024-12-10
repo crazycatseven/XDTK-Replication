@@ -8,19 +8,19 @@ public class SensorDataProvider : MonoBehaviour, IDataProvider
     public event Action<string, byte[]> OnDataSend;
 
     [SerializeField]
-    private float updateInterval = 0.1f; // 更新频率
+    private float updateInterval = 0.1f; // Update frequency
     private float lastUpdateTime;
 
     [Serializable]
     public class SensorData
     {
-        public Vector3 acceleration;      // 加速度
-        public Vector3 gyroscope;         // 陀螺仪
-        public Vector3 gravity;           // 重力
-        public Quaternion deviceAttitude; // 设备朝向
-        public float magneticHeading;     // 磁北方向
-        public float trueHeading;         // 真北方向
-        public float headingAccuracy;     // 方向精度
+        public Vector3 acceleration;      // Acceleration
+        public Vector3 gyroscope;         // Gyroscope
+        public Vector3 gravity;           // Gravity
+        public Quaternion deviceAttitude; // Device orientation
+        public float magneticHeading;     // Magnetic heading
+        public float trueHeading;         // True heading
+        public float headingAccuracy;     // Heading accuracy
 
         public string ToJson()
         {

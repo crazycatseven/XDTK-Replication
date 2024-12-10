@@ -13,9 +13,9 @@ public class WebViewMessageHandler : MonoBehaviour
     [Serializable]
     public class BaseMessage
     {
-        public string type;     // 消息类型
-        public string url;      // 网页URL
-        public string value;    // 业务数据
+        public string type;     // Message type
+        public string url;      // Webpage URL
+        public string value;    // Business data
     }
 
     [Serializable]

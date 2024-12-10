@@ -1,4 +1,3 @@
-// 将video变量提升到全局作用域
 let videoElement;
 
 let playIcon, pauseIcon;
@@ -15,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalTimeDisplay = document.querySelector('.total-time');
     const videoControls = document.querySelector('.video-controls');
 
-    // 播放/暂停功能
+    // Play/pause function
     playButton.addEventListener('click', togglePlay);
     videoElement.addEventListener('click', togglePlay);
 
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 全屏功能
+    // Full screen function
     fullscreenButton.addEventListener('click', () => {
         if (!document.fullscreenElement) {
             videoElement.requestFullscreen().catch(err => {
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 进度条功能
+    // Progress bar function
     videoElement.addEventListener('timeupdate', () => {
         const percent = (videoElement.currentTime / videoElement.duration) * 100;
         progressFilled.style.width = `${percent}%`;
@@ -58,14 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
         videoElement.currentTime = progressTime;
     });
 
-    // 格式化时间显示
+    // Format time display
     function formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         seconds = Math.floor(seconds % 60);
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // 自动隐藏控制栏
+    // Automatically hide control bar
     let controlsTimeout;
     const videoWrapper = document.querySelector('.video-wrapper');
 
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// 修改getValue函数
+// Modify getValue function
 window.getValue = () => {
     if (videoElement && playIcon && pauseIcon) {
         videoElement.pause();

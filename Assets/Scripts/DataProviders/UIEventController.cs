@@ -44,9 +44,9 @@ public class UIEventController : MonoBehaviour
     [System.Serializable]
     public class SuperButtonMapping : UIElementMapping
     {
-        public Button element;          // 基础按钮组件
-        public float holdThreshold = 0.2f;  // 判定为长按的时间阈��
-        public float dragThreshold = 5f;    // 判定为拖拽的最小距离
+        public Button element;          // Base button component
+        public float holdThreshold = 0.2f;  // Time threshold for long press
+        public float dragThreshold = 5f;    // Minimum distance for drag
     }
 
     [SerializeField]
@@ -227,7 +227,7 @@ public class UIEventController : MonoBehaviour
         }
     }
 
-    // 用于追踪每个按钮状态的类
+    // Class to track the state of each button
     private class SuperButtonState
     {
         public Vector2 pressStartPos;
@@ -235,10 +235,10 @@ public class UIEventController : MonoBehaviour
         public float pressStartTime;
         public bool isDragging;
         public bool isHolding;
-        public Coroutine holdCoroutine;  // 添加对协程的引用
+        public Coroutine holdCoroutine;  // Reference to the coroutine
     }
 
-    // 用于序列化拖拽事件数据的类
+    // Class to serialize drag event data
     [Serializable]
     private class DragEventData
     {
@@ -247,7 +247,7 @@ public class UIEventController : MonoBehaviour
         public Vector2 position;
     }
 
-    // 用于序列化释放事件数据的类
+    // Class to serialize release event data
     [Serializable]
     private class ReleaseEventData
     {
@@ -256,7 +256,7 @@ public class UIEventController : MonoBehaviour
         public Vector2 finalPosition;
     }
 
-    // 辅助方法：添加事件触发器
+    // Helper method: Add event trigger
     private void AddEventTrigger(EventTrigger eventTrigger, EventTriggerType triggerType, 
         UnityEngine.Events.UnityAction<BaseEventData> action)
     {

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./menu.css">
+</head>
+<body>
+    <div class="page active">
+        <div class="menu-header">
+            <button class="menu-button" onclick="window.location.href='index.html'">
+                <img src="./images/menu.png" alt="Menu">
+            </button>
+            <div class="header-content">
+                <h1>Hi, Jane</h1>
+                <h2>Special food for you!</h2>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <img src="./images/search.png" alt="Search" class="search-icon">
+                <input type="text" placeholder="Search here">
+            </div>
+        </div>
+
+        <div class="categories">
+            <div class="category-item active">
+                <img src="./images/pizza.png" alt="Pizzas">
+                <span>Pizzas</span>
+                <div class="dot"></div>
+            </div>
+            <div class="category-item">
+                <img src="./images/burger.png" alt="Burgers">
+                <span>Burgers</span>
+                <div class="dot"></div>
+            </div>
+            <div class="category-item">
+                <img src="./images/dessert.png" alt="Desserts">
+                <span>Desserts</span>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div class="section-title">Popular</div>
+
+        <div class="food-list">
+            <div class="food-item">
+                <img src="./images/cheese-burger.png" alt="Cheese Burger">
+                <div class="food-info">
+                    <h3>Cheese Burger</h3>
+                    <p>250g (1 pcs)</p>
+                    <div class="price">$5.5</div>
+                </div>
+                <button class="favorite-btn">
+                    <img src="./images/heart.png" alt="Favorite">
+                </button>
+            </div>
+
+            <div class="food-item">
+                <img src="./images/chicken-burger.png" alt="Chicken Burger">
+                <div class="food-info">
+                    <h3>Chicken Burger</h3>
+                    <p>350g (1 pcs)</p>
+                    <div class="price">$7.0</div>
+                </div>
+                <button class="favorite-btn">
+                    <img src="./images/heart.png" alt="Favorite">
+                </button>
+            </div>
+
+            <div class="food-item">
+                <img src="./images/salmon-burger.png" alt="Salmon Burger">
+                <div class="food-info">
+                    <h3>Salmon Burger</h3>
+                    <p>300g (1 pcs)</p>
+                    <div class="price">$8.5</div>
+                </div>
+                <button class="favorite-btn">
+                    <img src="./images/heart.png" alt="Favorite">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./menu.js"></script>
+</body>
+</html> 

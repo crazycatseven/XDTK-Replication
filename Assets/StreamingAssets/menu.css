@@ -1,0 +1,173 @@
+.menu-header {
+    padding: 20px 16px;
+    background: var(--background-color);
+}
+
+.menu-button {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 16px;
+}
+
+.menu-button img {
+    width: 100%;
+    height: 100%;
+}
+
+.header-content h1 {
+    font-size: 24px;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.header-content h2 {
+    font-size: 18px;
+    margin: 8px 0 0 0;
+    color: var(--text-secondary);
+}
+
+.search-container {
+    padding: 0 16px 16px 16px;
+}
+
+.search-box {
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+}
+
+.search-box input {
+    border: none;
+    background: transparent;
+    flex: 1;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.search-box input::placeholder {
+    color: var(--text-secondary);
+}
+
+.categories {
+    display: flex;
+    gap: 24px;
+    padding: 16px;
+    overflow-x: auto;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    cursor: pointer;
+}
+
+.category-item img {
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+    background: var(--card-background);
+    border-radius: 16px;
+}
+
+.category-item span {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.category-item.active span {
+    color: var(--text-color);
+}
+
+.category-item .dot {
+    width: 4px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.category-item.active .dot {
+    opacity: 1;
+}
+
+.section-title {
+    padding: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.food-list {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.food-item {
+    background: var(--card-background);
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.food-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.food-info {
+    flex: 1;
+}
+
+.food-info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.food-info p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.price {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.favorite-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.favorite-btn img {
+    width: 24px;
+    height: 24px;
+} 

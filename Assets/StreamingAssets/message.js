@@ -21,6 +21,23 @@ document.addEventListener('DOMContentLoaded', function() {
             previewModal.classList.remove('active');
         }
     };
+
+    // Add message animation
+    const messages = document.querySelectorAll('.message-item');
+    
+    function showMessage(index) {
+        if (index >= messages.length) return;
+        
+        setTimeout(() => {
+            messages[index].classList.remove('hidden');
+            showMessage(index + 1);
+        }, 1000); // 1 second delay for each message
+    }
+
+    // Start showing messages after a short delay
+    setTimeout(() => {
+        showMessage(0);
+    }, 500);
 });
 
 

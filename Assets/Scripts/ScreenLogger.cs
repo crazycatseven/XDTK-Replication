@@ -3,61 +3,61 @@ using UnityEngine;
 
 public class ScreenLogger : MonoBehaviour
 {
-    private List<string> logs = new List<string>(); // 存储所有日志信息
-    private string logText = ""; // 显示在屏幕上的日志内容
-    private GUIStyle guiStyle = new GUIStyle(); // GUI 样式
+    private List<string> logs = new List<string>(); // Store all log messages
+    private string logText = ""; // Log content displayed on the screen
+    private GUIStyle guiStyle = new GUIStyle(); // GUI style
     private Vector2 scrollPosition;
 
     private void OnEnable()
     {
-        // 订阅日志事件
+        // Subscribe to log events
         Application.logMessageReceived += HandleLog;
-        guiStyle.fontSize = 20; // 设置字体大小
-        guiStyle.normal.textColor = Color.white; // 设置字体颜色
+        guiStyle.fontSize = 20; // Set font size
+        guiStyle.normal.textColor = Color.white; // Set font color
     }
 
     private void OnDisable()
     {
-        // 取消订阅日志事件
+        // Unsubscribe from log events
         Application.logMessageReceived -= HandleLog;
     }
 
-    // 处理日志的回调函数
+    // Callback function to handle logs
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
         string newLog = $"{type}: {logString}";
 
         if (type == LogType.Error || type == LogType.Exception || type == LogType.Warning)
         {
-            newLog += $"\n{stackTrace}"; // 错误和异常需要添加堆栈信息
+            newLog += $"\n{stackTrace}"; // Add stack trace for errors and exceptions
         }
 
-        logs.Add(newLog); // 将日志添加到列表
-        logText = string.Join("\n", logs.ToArray()); // 更新屏幕显示的日志内容
+        logs.Add(newLog); // Add log to the list
+        logText = string.Join("\n", logs.ToArray()); // Update the log content displayed on the screen
 
-        // 可选:自动滚动到最新日志
+        // Optional: Automatically scroll to the latest log
         scrollPosition = new Vector2(0, float.MaxValue);
     }
 
     private void OnGUI()
     {
-        // 设置自动换行
+        // Enable word wrap
         guiStyle.wordWrap = true;
         
-        // 创建一个固定大小的显示区域
+        // Create a fixed-size display area
         float areaWidth = Screen.width * 0.95f;
         float areaHeight = Screen.height * 0.2f;
         
-        // 开始一个滚动视图区域
+        // Start a scroll view area
         GUILayout.BeginArea(new Rect(10, 10, areaWidth, areaHeight));
         var scrollViewStyle = new GUIStyle(GUI.skin.scrollView);
-        scrollViewStyle.padding = new RectOffset(10, 10, 10, 10); // 设置滚动条的内边距
+        scrollViewStyle.padding = new RectOffset(10, 10, 10, 10); // Set padding for the scroll view
         scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUILayout.Width(areaWidth), GUILayout.Height(areaHeight));
         
-        // 显示日志内容
+        // Display log content
         GUILayout.Label(logText, guiStyle);
         
-        // 结束滚动视图
+        // End the scroll view
         GUILayout.EndScrollView();
         GUILayout.EndArea();
     }

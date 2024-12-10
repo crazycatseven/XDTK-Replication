@@ -15,8 +15,8 @@ public class ARCameraHandler : MonoBehaviour, IDataHandler
 
             // Debug.Log($"ARCameraHandler: Received camera data - Position: {cameraData.position}, Rotation: {cameraData.rotation.eulerAngles}");
 
-            // 在这里处理接收到的相机数据
-            // 例如更新某个对象的位置和旋转
+            // Process the received camera data
+            // For example, update an object's position and rotation
             // UpdateCameraTransform(cameraData.position, cameraData.rotation);
         }
         else

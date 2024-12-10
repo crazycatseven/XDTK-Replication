@@ -34,7 +34,7 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
 
     #region Pinch Gesture Properties
     [SerializeField]
-    private float minPinchDistance = 10f; // 最小捏合距离
+    private float minPinchDistance = 10f; // Minimum pinch distance
     private bool isPinching = false;
     private Vector2 pinchStartPos1, pinchStartPos2;
     private float pinchStartDistance;
@@ -150,11 +150,11 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
 
     private void DisableUIInteraction()
     {
-        // 禁用EventSystem
+        // Disable EventSystem
         if (eventSystem != null)
             eventSystem.enabled = false;
 
-        // 禁用所有GraphicRaycaster
+        // Disable all GraphicRaycasters
         foreach (var raycaster in raycasters)
         {
             if (raycaster != null)
@@ -164,11 +164,11 @@ public class ScreenGestureProvider : MonoBehaviour, IDataProvider
 
     private void EnableUIInteraction()
     {
-        // 重新启用EventSystem
+        // Re-enable EventSystem
         if (eventSystem != null)
             eventSystem.enabled = true;
 
-        // 重新启用所有GraphicRaycaster
+        // Re-enable all GraphicRaycasters
         foreach (var raycaster in raycasters)
         {
             if (raycaster != null)

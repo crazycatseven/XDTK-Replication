@@ -8,7 +8,7 @@ public class AROriginManager : MonoBehaviour
     private Vector3 originPositionOffset;
     private Quaternion originRotationOffset;
 
-    public Vector3 cameraToCenterOffset = new Vector3(-0.02f, -0.04f, 0f); // 左2cm，下4cm的偏移
+    public Vector3 cameraToCenterOffset = new Vector3(-0.02f, -0.04f, 0f); // Left 2cm, down 4cm offset
 
     void Start()
     {
@@ -34,7 +34,7 @@ public class AROriginManager : MonoBehaviour
     public Vector3 GetDeviceCenterPosition()
     {
         Vector3 cameraPosition = Camera.main.transform.position;
-        // 使用当前相机的旋转来转换偏移量，确保无论手机如何旋转，偏移始终正确
+        // Use the current camera's rotation to convert the offset, ensuring the offset is always correct regardless of phone rotation
         Vector3 centerPosition = cameraPosition + Camera.main.transform.TransformDirection(cameraToCenterOffset);
         return centerPosition;
     }

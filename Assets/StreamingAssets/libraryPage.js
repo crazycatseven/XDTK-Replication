@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.libraryManager = libraryManager;
 });
 
-// 直接暴露给全局
+// Expose directly to the global scope
 window.getValue = () => {
     const currentSlide = document.querySelector('.library-slide.active');
     if (currentSlide) {
